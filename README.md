@@ -191,7 +191,7 @@ yarn build
 - setOrder(user: IUser): void - заполнять данные о заказе
 - ValidationPayment(
   data: Record<keyof TUserPaymentInfo, string>
-  ): boolean; - валидация вводимых полей
+  ): boolean - валидация вводимых полей
 - render(): HTMLElement - возвращает полностью заполненый товар и устанавливает слушатели событий
 
 #### Класс OrderUserView
@@ -218,7 +218,7 @@ yarn build
 
 Методы:
 
-- getTotalPrice(product: Partial<ICard>): void - заполняет сумму товаров
+- `getTotalPrice(product: Partial<ICard>): void` - заполняет сумму товаров
 - render(): HTMLElement - возвращает полностью заполненый товар и устанавливает слушатели событий
 
 ### СЛОЙ ПРЕЗЕНТОРА

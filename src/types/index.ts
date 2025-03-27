@@ -45,3 +45,36 @@ export interface ICardModel {
 
 export type TUserPaymentInfo = Pick<IUser, 'payment' | 'address'>;
 export type TUserInfo = Pick<IUser, 'email' | 'telephone'>;
+
+export interface ModalView {
+	openModal(): void;
+	closeModal(): void;
+	setUpEvents(): void;
+}
+
+export interface ProductView {
+	setProduct(productId: IProduct): void;
+	render(): HTMLElement;
+}
+
+export interface CardView {
+	setProductCard(productId: ICard): void;
+	render(): HTMLElement;
+}
+
+export interface OrderView {
+	setOrder(user: IUser): void;
+	ValidationPayment(data: Record<keyof TUserPaymentInfo, string>): boolean;
+	render(): HTMLElement;
+}
+
+export interface OrderUserView {
+	setOrderUser(user: IUser): void;
+	ValidationUser(data: Record<keyof IUser, string | number>): boolean;
+	render(): HTMLElement;
+}
+
+export interface NotificationsView {
+	getTotalPrice(product: Partial<ICard>): void;
+	render(): HTMLElement;
+}
