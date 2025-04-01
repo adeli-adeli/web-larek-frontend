@@ -196,10 +196,10 @@ yarn build
 
 Свойства:
   - protected description?: HTMLElement;
-	- protected title: HTMLElement;
-	- protected image: HTMLImageElement;
-	- protected category: HTMLElement;
-	- protected price: HTMLElement;
+  - protected title: HTMLElement;
+  - protected image: HTMLImageElement;
+  - protected category: HTMLElement;
+  - protected price: HTMLElement;
   - protected button: HTMLButtonElement
 
 Конструктор:
@@ -220,7 +220,7 @@ yarn build
 
 Свойства:
   - protected items: HTMLElement;
-	- protected total: HTMLElement;
+  - protected total: HTMLElement;
   - protected button: HTMLButtonElement
 
 Конструктор:
@@ -241,7 +241,7 @@ yarn build
 
 Свойства:
   - protected payment: HTMLElement;
-	- protected address: HTMLElement;
+  - protected address: HTMLElement;
   - protected button: HTMLButtonElement
 
 Конструктор:
@@ -262,7 +262,7 @@ yarn build
 
 Свойства:
   - protected email: HTMLElement;
-	- protected phone: HTMLElement;
+  - protected phone: HTMLElement;
   - protected button: HTMLButtonElement
 
 Конструктор:
@@ -283,7 +283,7 @@ yarn build
 
 Свойства:
   - protected productId: string;
-	- protected total: HTMLElement;
+  - protected total: HTMLElement;
   - protected button: HTMLButtonElement
 
 Конструктор:
