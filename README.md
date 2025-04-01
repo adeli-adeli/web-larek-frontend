@@ -51,7 +51,7 @@ yarn build
 
 - слой данных, отвечает за хранение и изменение данных,
 - слой представление, отвечает за отображения данных на странице,
-- презентер, отвечает за связь представления и
+- презентер, отвечает за связь представления и слоя данных
 
 ### Базовый код
 
@@ -72,59 +72,97 @@ yarn build
 - `emit` - инициализация события
 - `trigger` - возвращает функцию, при вызове которой инициализируется требуемое в параметрах событие
 
+#### Класс Component
+
+Представляет собой базовый абстрактный компонент, предназначенный для работы с DOM в веб-приложениях.
+
+Свойства:
+  - protected readonly _container: HTMLElement - Корневой DOM-элемент
+
+Конструктор:
+  - constructor(protected readonly container: HTMLElement)
+
+Методы:
+  - toggleClass(element: HTMLElement, className: string, force?: boolean): : void - Переключить класс
+  - protected setText(element: HTMLElement, value: unknown): void - Установить текстовое содержимое
+  - setDisabled(element: HTMLElement, state: boolean): void - Сменить статус блокировки
+  - protected setHidden(element: HTMLElement): void - Скрыть
+  - protected setVisible(element: HTMLElement): void - Показать
+  - protected setImage(element: HTMLImageElement, src: string, alt?: string): void - Установить изображение с альтернативным текстом
+  - render(data?: Partial<T>): HTMLElement - Вернуть корневой DOM-элемент   
+
+#### Класс Model
+
+ Представляет собой базувую модель, чтобы можно было отличить ее от простых объектов с данными
+
+Свойства:
+  - protected _events: IEvents - экземпляр класса `EventEmitter` для инициализации событий при изменении данных
+
+Конструктор:
+  -  constructor(data: Partial<T>, protected events: IEvents)
+
+Методы:
+  - emitChanges(event: string, payload?: object) - сообщает всем что модель поменялась
+
 ### СЛОЙ ДАННЫХ
 
 #### Класс CatalogModel
 
 Класс отвечает за хранение и логику работы с данными товара.\
 Конструктор класса принимает инстант брокера событий\
-В полях класса храняться следующие данные:
 
-- \_items: IProduct[] - массив объектов товара
-- \_events: IEvents - экземпляр класса `EventEmitter` для инициализации событий при изменении данных
+Свойства:
+  - protected _items: IProduct[] - массив объектов товара
+  - protected _events: IEvents - экземпляр класса `EventEmitter` для инициализации событий при изменении данных
 
-Так же класс предоставляет набор методов для взаимодествия с этими данными.
+Конструктор: 
+  -  constructor(items: IProduct[], events: IEvents)
 
-- getProduct(productId: string): IProduct - возвращает товар по ее id
-- get items: IProduct[] - для получения данных о товарах
+Методы:
+  - getProduct(productId: string): IProduct - возвращает товар по ее id
+  - setProducts(product: IProduct[]): void - для записи массива товаров
+  - get items: IProduct[] - для получения данных о товарах
 
 #### Класс UserModel
 
 Отвечает за хранение и логику работы с данными пользователя.\
 Конструктор принимает экземпляр брокера событий.\
-В полях класса храняться следующие данные:
 
-- id: string - уникальный идентификатор
-- payment: string - выбор оплаты
-- address: string - адресс доставки
-- email: string - почта
-- telephone: number - номер телефона
-- events: IEvents - это экземпляр класса `EventEmitter`, который будет использоваться для отправки событий при изменении данных
+Свойства:
+  - payment: string - выбор оплаты
+  - address: string - адресс доставки
+  - email: string - почта
+  - phone: string - номер телефона
+  - events: IEvents - это экземпляр класса `EventEmitter`, который будет использоваться для отправки событий при изменении данных
 
-Так же класс предоставляет набор методов для взаимодествия с этими данными.
 
-- setUserInfo(userData: IUser): void - сохраняет данные пользователя в классе
-- checkValidationPaymentInfo(data: Record<keyof TUserPaymentInfo, string>): boolean - проверяет объект платежной информацией пользователя на валидность
-- checkValidationUserInfo(data: Record<keyof IUser, string | number>): boolean - проверяет объект с данными пользователя на валидность
+Конструктор: 
+  -  constructor(payment: string, address: string, email: string, phone: string, events: IEvents)
 
-#### Класс CardModel
+Методы:
+  - setUserInfo(userData: IUser): void - сохраняет данные пользователя в классе
+  - checkValidationPaymentInfo(data: Record<keyof TUserPaymentInfo, string>): boolean - проверяет объект платежной информацией пользователя на валидность
+  - checkValidationUserInfo(data: Record<keyof IUser, string | number>): boolean - проверяет объект с данными пользователя на валидность
 
-Отвечает за хранение и логику работы с данными товаров.\
+#### Класс BasketModel
+
+Отвечает за хранение и логику работы с данными товаров в корзине.\
 Конструктор принимает экземпляр брокера событий.\
-В полях класса храняться следующие данные:
 
-- items: ICard[] - массив объектов товара
-- total: number - сумма всех товаров
-- events: IEvents - это экземпляр класса `EventEmitter`, который будет использоваться для отправки событий при изменении данных
+Свойства:
+  - items: IProduct[] - массив объектов товара
+  - events: IEvents - это экземпляр класса `EventEmitter`, который будет использоваться для отправки событий при изменении данных.
 
-Так же класс предоставляет набор методов для взаимодествия с этими данными.
+Конструктор: 
+  -  constructor(items: IProduct[], events: IEvents)
 
-- addToCard(product: IProduct): void - добавление товара в корзину
-- removeFromCard(productId: string): void - удаление товара с корзины
-- getCard(): ICard[] - получение текущего состояния корзины
-- getTotalPrice(): number - получение общей стоимости всех товаров
-- hasPricelessItem(): boolean - проверка на бесценный товар
-- updateButtonState(productId: string): void - изменяет состояние кнопки (оформления)
+Методы:
+  - addToBasket(product: IProduct): void - добавление товара в корзину
+  - removeFromBasket(productId: string): void - удаление товара с корзины
+  - getBasket(): IProduct[] - получение текущего состояния корзины
+  - getTotalPrice(): number - получение общей стоимости всех товаров
+  - hasPricelessItem(): boolean - проверка на бесценный товар
+  - updateButtonState(productId: string): void - изменяет состояние кнопки (оформления)
 
 ### СЛОЙ ПРЕДСТАВЛЕНИЯ
 
@@ -134,18 +172,17 @@ yarn build
 
 Реализует модальное окно.Устанавливает слушатель на клик по оверлею и кнопку-крестик для закрытие модального окна.
 
-- constructor(selector: string, events: IEvents) - конструтор который принимает селектор и экземпляр класса EventEmitter, будет использоваться для инициализации модального окна.
+Свойства:
+  - modal: HTMLElement - элемент модального окна
+  - events: IEvents - это экземпляр класса `EventEmitter`, который будет использоваться для отправки событий при изменении данных.
 
-Поля класса:
+Конструктор:
+  - constructor(selector: string, events: IEvents)
 
-- modal: HTMLElement - элемент модального окна
-- events: IEvents - это экземпляр класса `EventEmitter`, который будет использоваться для отправки событий при изменении данных
-
-Так же класс предоставляет набор методов для взаимодествия с этими данными.
-
-- openModal(): void - открыть модальное окно
-- closeModal(): void - закрыть модальное окно
-- setUpEvents(): void - установить события
+Методы:
+  - openModal(): void - открыть модальное окно
+  - closeModal(): void - закрыть модальное окно
+  - setUpEvents(): void - установить события
 
 #### Класс ProductView
 
@@ -156,56 +193,84 @@ yarn build
 Конструктор принимает DOM элемент темплейта, который позволяет формировать карточки с разными вариантами верстки. Устанавливаем слушатели событий на интерактивные элементы, при взаимодействии с элементами генерируются события
 
 Поля класса хранят данные о разметки элементов.
-Конструтор кроме темплейта, принимает экземпляр класса EventEmitter для инициализации событий.
+
+Свойства:
+  - protected description?: HTMLElement;
+	- protected title: HTMLElement;
+	- protected image: HTMLImageElement;
+	- protected category: HTMLElement;
+	- protected price: HTMLElement;
+  - protected button: HTMLButtonElement
+
+Конструктор:
+  - constructor(template: HTMLTemplateElement, events: IEvents)
 
 Методы:
+  - setProduct(productId: IProduct): void - замолняет атрибуты элементов товара данными
+  - render(): HTMLElement - возвращает полностью заполненый товар и устанавливает слушатели событий
+  - get id - возвращает уникальный id карточки
 
-- setProduct(productId: IProduct): void - замолняет атрибуты элементов товара данными
-- render(): HTMLElement - возвращает полностью заполненый товар и устанавливает слушатели событий
-- геттер id возвращает уникальный id карточки
-
-#### Класс CardView
+#### Класс BasketView
 
 Класс используется для отображения выбраных товаров в корзине.
 
-Элемнты разметки: выбранный товар, цена, общая сумму товаров.
+Элементы разметки: выбранный товар,  общая сумму товаров.
 
 Конструктор принимает DOM элемент темплейта, для работы с отображением корзины. Устанавливаем слушатели событий на интерактивные элементы, при взаимодействии с элементами генерируются события
 
-Методы:
+Свойства:
+  - protected items: HTMLElement;
+	- protected total: HTMLElement;
+  - protected button: HTMLButtonElement
 
+Конструктор:
+  - constructor(template: HTMLTemplateElement, events: IEvents)
+
+Методы:
 - setProductCard(productId: ICard): void - замолняет список товаров
 - render(): HTMLElement - возвращает полностью заполненый товар и устанавливает слушатели событий
-- геттер id возвращает уникальный id карточки
+- get id - возвращает уникальный id карточки
 
 #### Класс OrderView
 
 Класс используется для оформления заказа
 
-Элементы разметки: выбор оплаты, адресс доставки. Также вводимые поля нужно проверять на валидность.
+Элементы разметки: выбор оплаты, адресс доставки.
 
 Конструктор принимает DOM элемент темплейта, для работы с отправкой формы.Устанавливаем слушатели событий на интерактивные элементы, при взаимодействии с элементами генерируются события
+
+Свойства:
+  - protected payment: HTMLElement;
+	- protected address: HTMLElement;
+  - protected button: HTMLButtonElement
+
+Конструктор:
+  - constructor(template: HTMLTemplateElement, events: IEvents)
 
 Методы:
 
 - setOrder(user: IUser): void - заполнять данные о заказе
-- ValidationPayment(
-  data: Record<keyof TUserPaymentInfo, string>
-  ): boolean - валидация вводимых полей
 - render(): HTMLElement - возвращает полностью заполненый товар и устанавливает слушатели событий
 
 #### Класс OrderUserView
 
 Класс используется для оформления заказа уже с данными пользователя
 
-Элементы разметки: почта, номер. Также вводимые поля нужно проверять на валидность.
+Элементы разметки: почта, номер.
 
 Конструктор принимает DOM элемент темплейта, для работы с отправкой формы.Устанавливаем слушатели событий на интерактивные элементы, при взаимодействии с элементами генерируются события
+
+Свойства:
+  - protected email: HTMLElement;
+	- protected phone: HTMLElement;
+  - protected button: HTMLButtonElement
+
+Конструктор:
+  - constructor(template: HTMLTemplateElement, events: IEvents)
 
 Методы:
 
 - setOrderUser(user: IUser): void - заполнять данные о пользователе
-- ValidationUser(data: Record<keyof IUser, string | number>): boolean - валидация вводимых полей
 - render(): HTMLElement - возвращает полностью заполненый товар и устанавливает слушатели событий
 
 #### Класс NotificationsView
@@ -216,9 +281,17 @@ yarn build
 
 Конструктор принимает DOM элемент темплейта, для работы с отображением уведомления.Устанавливаем слушатели событий на интерактивные элементы, при взаимодействии с элементами генерируются события
 
+Свойства:
+  - protected productId: string;
+	- protected total: HTMLElement;
+  - protected button: HTMLButtonElement
+
+Конструктор:
+  - constructor(template: HTMLTemplateElement, events: IEvents)
+
 Методы:
 
-- `getTotalPrice(product: Partial<ICard>): void` - заполняет сумму товаров
+- `getTotalPrice(product: IOrderResponse): void` - заполняет сумму товара
 - render(): HTMLElement - возвращает полностью заполненый товар и устанавливает слушатели событий
 
 ### СЛОЙ ПРЕЗЕНТОРА

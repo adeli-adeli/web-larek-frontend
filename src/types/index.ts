@@ -8,20 +8,26 @@ export interface IProduct {
 }
 
 export interface IUser {
-	id: string;
 	payment: string;
 	address: string;
 	email: string;
-	telephone: number;
+	phone: string;
 }
 
-export interface ICard extends IProduct {
-	quantity: number;
+export interface IOrder extends IUser {
+	total: number;
+	items: IProduct[];
+}
+
+export interface IOrderResponse {
+	id: string;
+	total: number;
 }
 
 export interface ICatalogModel {
 	items: IProduct[];
-	getProduct(productId: string): IProduct | undefined;
+	getProduct(productId: string): IProduct;
+	setProducts(product: IProduct[]): void;
 }
 
 export interface IUserModel {
@@ -29,22 +35,21 @@ export interface IUserModel {
 	checkValidationPaymentInfo(
 		data: Record<keyof TUserPaymentInfo, string>
 	): boolean;
-	checkValidationUserInfo(data: Record<keyof IUser, string | number>): boolean;
+	checkValidationUserInfo(data: Record<keyof IUser, string>): boolean;
 }
 
-export interface ICardModel {
+export interface IBasketModel {
 	items: IProduct[];
-	total: number;
-	addToCard(product: IProduct): void;
-	removeFromCard(productId: string): void;
-	getCard(): ICard[];
+	addToBasket(product: IProduct): void;
+	removeFromBasket(productId: string): void;
+	getBasket(): IProduct[];
 	getTotalPrice(): number;
 	hasPricelessItem(): boolean;
 	updateButtonState(productId: string): void;
 }
 
 export type TUserPaymentInfo = Pick<IUser, 'payment' | 'address'>;
-export type TUserInfo = Pick<IUser, 'email' | 'telephone'>;
+export type TUserInfo = Pick<IUser, 'email' | 'phone'>;
 
 export interface ModalView {
 	openModal(): void;
@@ -54,27 +59,20 @@ export interface ModalView {
 
 export interface ProductView {
 	setProduct(productId: IProduct): void;
-	render(): HTMLElement;
 }
 
-export interface CardView {
-	setProductCard(productId: ICard): void;
-	render(): HTMLElement;
+export interface BasketView {
+	setProductBasket(productId: IProduct): void;
 }
 
 export interface OrderView {
 	setOrder(user: IUser): void;
-	ValidationPayment(data: Record<keyof TUserPaymentInfo, string>): boolean;
-	render(): HTMLElement;
 }
 
 export interface OrderUserView {
 	setOrderUser(user: IUser): void;
-	ValidationUser(data: Record<keyof IUser, string | number>): boolean;
-	render(): HTMLElement;
 }
 
 export interface NotificationsView {
-	getTotalPrice(product: Partial<ICard>): void;
-	render(): HTMLElement;
+	getTotalPrice(product: IOrderResponse): void;
 }
