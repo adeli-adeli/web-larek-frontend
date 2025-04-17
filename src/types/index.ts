@@ -7,72 +7,66 @@ export interface IProduct {
 	price: number | null;
 }
 
-export interface IUser {
+export interface IOrderForm {
 	payment: string;
 	address: string;
 	email: string;
 	phone: string;
 }
 
-export interface IOrder extends IUser {
-	total: number;
-	items: IProduct[];
+export interface IOrder extends IOrderForm {
+	products: IProduct[];
+	total?: number;
 }
 
 export interface IOrderResponse {
 	id: string;
-	total: number;
+	total?: number;
 }
 
 export interface ICatalogModel {
-	items: IProduct[];
+	products: IProduct[];
 	getProduct(productId: string): IProduct;
-	setProducts(product: IProduct[]): void;
+	getSelectProduct(): IProduct;
+	setSelectProduct(productId: string): IProduct;
 }
 
-export interface IUserModel {
-	setUserInfo(userData: IUser): void;
-	checkValidationPaymentInfo(
-		data: Record<keyof TUserPaymentInfo, string>
-	): boolean;
-	checkValidationUserInfo(data: Record<keyof IUser, string>): boolean;
+export interface IOrderFormModel {
+	getUserInfo(): IOrderForm;
+	setUserInfo(userData: IOrderForm): void;
+	// ValidationPaymentInfo(
+	// 	data: Record<keyof IOrderForm, string>
+	// ): Partial<Record<keyof IOrderForm, string>>;
+	// ValidationUserInfo(
+	// 	data: Record<keyof IOrderForm, string>
+	// ): Partial<Record<keyof IOrderForm, string>>;
 }
 
 export interface IBasketModel {
-	items: IProduct[];
 	addToBasket(product: IProduct): void;
 	removeFromBasket(productId: string): void;
 	getBasket(): IProduct[];
 	getTotalPrice(): number;
-	hasPricelessItem(): boolean;
-	updateButtonState(productId: string): void;
+	clearBasket(): void;
+}
+export interface IAppState {
+    catalog: IProduct[]
+    basket: string[]
+    preview: string | null
+    order: IOrder
 }
 
-export type TUserPaymentInfo = Pick<IUser, 'payment' | 'address'>;
-export type TUserInfo = Pick<IUser, 'email' | 'phone'>;
+//ПОДУМАТЬ НАДО ЭТО ИЛИ НЕТ
+export type TOrderInfo = Pick<IOrderForm, 'payment' | 'address'>;
 
-export interface ModalView {
-	openModal(): void;
-	closeModal(): void;
-	setUpEvents(): void;
-}
+export type TContactsInfo = Pick<IOrderForm, 'email' | 'phone'>;
 
-export interface ProductView {
-	setProduct(productId: IProduct): void;
-}
+export type FormErrors = Partial<Record<keyof IOrder, string>>;
 
-export interface BasketView {
-	setProductBasket(productId: IProduct): void;
-}
+export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 
-export interface OrderView {
-	setOrder(user: IUser): void;
-}
-
-export interface OrderUserView {
-	setOrderUser(user: IUser): void;
-}
-
-export interface NotificationsView {
-	getTotalPrice(product: IOrderResponse): void;
+export interface IApi {
+	baseUrl: string;
+	get<T>(uri: string): Promise<T>;
+	post<T>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
 }

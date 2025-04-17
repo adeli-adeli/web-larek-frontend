@@ -14,7 +14,7 @@ export abstract class Component<T> {
     toggleClass(element: HTMLElement, className: string, force?: boolean) {
         element.classList.toggle(className, force);
     }
-
+ 
     // Установить текстовое содержимое
     protected setText(element: HTMLElement, value: unknown) {
         if (element) {
