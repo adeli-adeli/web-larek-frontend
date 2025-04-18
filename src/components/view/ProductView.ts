@@ -4,37 +4,47 @@ import { IProduct } from '../../types';
 import { ensureElement } from '../../utils/utils';
 
 export class ProductView extends Component<IProduct> {
-	protected productCardCategory: HTMLElement;
+	protected productCardCategory?: HTMLElement;
 	protected productCardTitle: HTMLElement;
-	protected productCardImage: HTMLImageElement;
+	protected productCardImage?: HTMLImageElement;
 	protected productCardPrice: HTMLElement;
-	protected events: IEvents;
+	protected productCardDescription?: HTMLElement;
+	protected addToBasketButton: HTMLButtonElement;
+	protected removeFromBasketButton: HTMLButtonElement;
+	 events: IEvents;
 
-	constructor(protected container: HTMLElement, events: IEvents) {
+	constructor(protected container: HTMLElement, events: IEvents, callback: any) {
 		super(container);
 		this.events = events;
 
-		this.productCardCategory = ensureElement<HTMLElement>(
+		this.productCardCategory = container.querySelector(
 			`.card__category`,
-			container
+			
 		);
-		this.productCardTitle = ensureElement<HTMLElement>(
+		this.productCardTitle = container.querySelector(
 			`.card__title`,
-			container
+			
 		);
-		this.productCardImage = ensureElement<HTMLImageElement>(
+		this.productCardImage = container.querySelector(
 			`.card__image`,
-			container
+			
 		);
 
-		this.productCardPrice = ensureElement<HTMLElement>(
+		this.productCardDescription = container.querySelector('.card__text');
+
+		this.productCardPrice = container.querySelector(
 			`.card__price`,
-			container
+			
 		);
 
-		this.container.addEventListener('click', () => {
-			this.events.emit('product:select', { id: this.id });
+		
+		
+		
+		this.container.addEventListener('click', (evt) => {
+			callback(evt, this)
 		});
+		  
+
 	}
 
 	set id(id: string) {
@@ -73,13 +83,22 @@ export class ProductView extends Component<IProduct> {
 		return this.productCardPrice.textContent || '';
 	}
 
+	set description(description: string) {
+		this.setText(this.productCardDescription, description);
+	}
+
+	get description() {
+		return this.productCardDescription.textContent || '';
+	}
+
 	render(product: Partial<IProduct>): HTMLElement {
 		this.id = product.id;
 		this.title = product.title;
 		this.image = product.image;
 		this.category = product.category;
+		this.description = product.description;
 		this.price = product.price ? `${product.price} синапсов` : 'Бесценно';
-		console.log(product.image);
+		
 		return this.container;
 	}
 }

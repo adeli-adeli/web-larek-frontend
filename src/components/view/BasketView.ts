@@ -48,7 +48,7 @@ export class BasketView extends Component<IBasketView> {
 	}
 
 	// активирует или блокирует кнопку оформления заказа,
-	// в зависимости от налия товаров
+	// в зависимости от наличия товаров
 	set addedItems(items: string[]) {
 		if (items.length === 0) {
 			this.setDisabled(this._button, true);
@@ -61,4 +61,5 @@ export class BasketView extends Component<IBasketView> {
 	set total(total: number) {
 		this.setText(this._total, `${total}`);
 	}
+	
 }
