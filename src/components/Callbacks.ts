@@ -12,5 +12,6 @@ export function handleClickAddToBasket(event: any, productView: ProductView) {
 
 export function handleClickRemoveFromBasket(event: any, productView: ProductView) {
 	// console.log('Событие 3', event.target); // Логируем, кто был кликнут
+	
 	productView.events.emit('card:remove', { id: productView.id });
 }

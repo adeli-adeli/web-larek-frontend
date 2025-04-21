@@ -8,14 +8,14 @@ export interface IProduct {
 }
 
 export interface IOrderForm {
-	payment: string;
-	address: string;
-	email: string;
-	phone: string;
+	payment?: 'card' | 'cash';
+	address?: string;
+	email?: string;
+	phone?: string;
 }
 
 export interface IOrder extends IOrderForm {
-	products: IProduct[];
+	items: IProduct[];
 	total?: number;
 }
 
@@ -24,36 +24,13 @@ export interface IOrderResponse {
 	total?: number;
 }
 
-export interface ICatalogModel {
-	products: IProduct[];
-	getProduct(productId: string): IProduct;
-	getSelectProduct(): IProduct;
-	setSelectProduct(productId: string): IProduct;
-}
-
-export interface IOrderFormModel {
-	getUserInfo(): IOrderForm;
-	setUserInfo(userData: IOrderForm): void;
-	// ValidationPaymentInfo(
-	// 	data: Record<keyof IOrderForm, string>
-	// ): Partial<Record<keyof IOrderForm, string>>;
-	// ValidationUserInfo(
-	// 	data: Record<keyof IOrderForm, string>
-	// ): Partial<Record<keyof IOrderForm, string>>;
-}
-
-export interface IBasketModel {
-	addToBasket(product: IProduct): void;
-	removeFromBasket(productId: string): void;
-	getBasket(): IProduct[];
-	getTotalPrice(): number;
-	clearBasket(): void;
-}
 export interface IAppState {
     catalog: IProduct[]
     basket: string[]
     preview: string | null
     order: IOrder
+	// дописать методы
+
 }
 
 //ПОДУМАТЬ НАДО ЭТО ИЛИ НЕТ

@@ -1,6 +1,6 @@
-import { ensureElement } from '../utils/utils';
-import { Component } from './base/Component';
-import { IEvents } from './base/events';
+import { ensureElement } from '../../utils/utils';
+import { Component } from '../../components/base/Component';
+import { IEvents } from '../../components/base/events';
 
 interface IPage {
 	counter: number;
@@ -27,17 +27,19 @@ export class Page extends Component<IPage> {
 		});
 	}
 
-	set counter(value: number) {
-		console.log('Сеттер вызван, значение:', value);
-	console.log('this._counter:', this._counter);
-	console.log('Элемент счётчика:', this._counter);
+	// Устанавливает значение счетчика товаров в корзине
 
+	set counter(value: number) {
 		this.setText(this._counter, String(value));
 	}
+
+	// Устанавливает список товаров в каталог
 
 	set catalog(products: HTMLElement[]) {
 		this.container.replaceChildren(...products);
 	}
+
+	// Устанавливает блокировку на прокрутку страницы
 
 	set locked(value: boolean) {
 		if (value) {

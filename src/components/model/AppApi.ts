@@ -1,5 +1,5 @@
-import { IApi, IProduct, IOrderForm, IOrder, IOrderResponse } from '../types';
-import { Api, ApiListResponse } from './base/api';
+import { IApi, IProduct, IOrderForm, IOrderResponse } from '../../types';
+import { Api, ApiListResponse } from '../base/api';
 
 export class AppApi extends Api implements IApi {
 	readonly cdn: string;
@@ -33,7 +33,7 @@ export class AppApi extends Api implements IApi {
 		return this.post<IProduct>(`/product/${productId}`, {}, 'DELETE');
 	}
 
-	orderProducts(order: IOrder): Promise<IOrderResponse> {
+	orderProducts(order: IOrderForm): Promise<IOrderResponse> {
 		return this.post(`/order`, order).then((data: IOrderResponse) => data);
 	}
 }
