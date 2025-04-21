@@ -35,13 +35,11 @@ export class Order extends Form<IOrderForm> {
 			this.container
 		);
 
-		
-
 		// Обработчик выбора способа оплаты
 
 		this.paymentButtons.forEach((btn) => {
 			btn.addEventListener('click', () => {
-				this.setPayment(btn.name as 'card' | 'cash');		
+				this.setPayment(btn.name as 'card' | 'cash');
 			});
 		});
 
@@ -69,13 +67,13 @@ export class Order extends Form<IOrderForm> {
 
 		this.paymentButtons.forEach((btn) => {
 			const isSelected = btn.name === method;
-			console.log(`Кнопка: ${method}, выбрана: ${isSelected} `)
+			console.log(`Кнопка: ${method}, выбрана: ${isSelected} `);
 			this.toggleClass(btn, 'button_alt', isSelected);
 			this.toggleClass(btn, 'button_alt', !isSelected);
 		});
 	}
 
-	// Устанавливаем значение адресса 
+	// Устанавливаем значение адресса
 
 	set address(value: string) {
 		this.addressInput.value = value;
