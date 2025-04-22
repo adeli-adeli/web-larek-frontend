@@ -2,18 +2,18 @@ import { FormErrors, IOrderForm } from '../../types';
 import { ensureElement } from '../../utils/utils';
 import { Component } from '../base/Component';
 import { IEvents } from '../base/events';
-import { AppState } from '../model/AppData';
+import { OrderModel } from '../model/OrderModel';
 import { Form } from './FormView';
 
 export class Order extends Form<IOrderForm> {
 	protected paymentButtons: NodeListOf<HTMLButtonElement>;
 	protected submitButton: HTMLElement;
 	protected addressInput: HTMLInputElement;
-	protected appState: AppState;
+	protected orderModel: OrderModel;
 
-	constructor(container: HTMLFormElement, events: IEvents, appState: AppState) {
+	constructor(container: HTMLFormElement, events: IEvents, orderModel: OrderModel) {
 		super(container, events);
-		this.appState = appState;
+		this.orderModel = orderModel;
 
 		// Получаем кнопки оплаты
 
@@ -45,16 +45,13 @@ export class Order extends Form<IOrderForm> {
 
 		// Обработка ввода адресса
 
-		this.addressInput.addEventListener('input', () => {
-			this.appState.setOrderField('address', this.addressInput.value);
-		});
+		this.addressInput.addEventListener('input', () => {});
 
 		// Обработка отправки формы
 
 		if (this.submitButton) {
 			this.submitButton.addEventListener('click', (evt) => {
 				evt.preventDefault();
-				this.appState.setOrderField('address', this.addressInput.value);
 				events.emit('order:form:submit');
 			});
 		}
@@ -63,8 +60,6 @@ export class Order extends Form<IOrderForm> {
 	// Устанавливаем выбранный способ оплаты
 
 	setPayment(method: 'card' | 'cash') {
-		this.appState.setOrderField('payment', method);
-
 		this.paymentButtons.forEach((btn) => {
 			const isSelected = btn.name === method;
 			console.log(`Кнопка: ${method}, выбрана: ${isSelected} `);

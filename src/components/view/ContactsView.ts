@@ -1,18 +1,22 @@
-import { FormErrors, IOrderForm } from '../../types';
+import { IOrderForm } from '../../types';
 import { ensureElement } from '../../utils/utils';
 import { IEvents } from '../base/events';
-import { AppState } from '../model/AppData';
+import { OrderModel } from '../model/OrderModel';
 import { Form } from './FormView';
 
 export class Contacts extends Form<IOrderForm> {
 	protected submitButton: HTMLElement;
 	protected emailInput: HTMLInputElement;
 	protected phoneInput: HTMLInputElement;
-	protected appState: AppState;
+	protected orderModel: OrderModel;
 
-	constructor(container: HTMLFormElement, events: IEvents, appState: AppState) {
+	constructor(
+		container: HTMLFormElement,
+		events: IEvents,
+		orderModel: OrderModel
+	) {
 		super(container, events);
-		this.appState = appState;
+		this.orderModel = orderModel;
 
 		// Кнопка
 
@@ -35,30 +39,21 @@ export class Contacts extends Form<IOrderForm> {
 			this.container
 		);
 
-		
 		// Обработчик поля почты
 
-		this.emailInput.addEventListener('input', () => {
-			this.appState.setOrderFieldContacts('email', this.emailInput.value);
-		});
+		this.emailInput.addEventListener('input', () => {});
 
 		// Обработчик поля номер телефона
 
-		this.phoneInput.addEventListener('input', () => {
-			this.appState.setOrderFieldContacts('phone', this.phoneInput.value);
-		});
+		this.phoneInput.addEventListener('input', () => {});
 
 		// Обработчик отправки формы
 
 		if (this.submitButton) {
 			this.submitButton.addEventListener('click', (evt) => {
 				evt.preventDefault();
-				this.appState.setOrderFieldContacts('email', this.emailInput.value);
-				this.appState.setOrderFieldContacts('phone', this.phoneInput.value);
 
-				
-
-				this.events.emit('order:submit', this.appState.order);
+				this.events.emit('order:submit', this.orderModel.order);
 			});
 		}
 	}

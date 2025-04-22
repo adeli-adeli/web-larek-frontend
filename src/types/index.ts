@@ -1,3 +1,5 @@
+import { ProductCard } from "../components/model/CatalogModel";
+
 export interface IProduct {
 	id: string;
 	description?: string;
@@ -7,8 +9,10 @@ export interface IProduct {
 	price: number | null;
 }
 
+export type TPayment = 'card' | 'cash';
+
 export interface IOrderForm {
-	payment?: 'card' | 'cash';
+	payment?: TPayment;
 	address?: string;
 	email?: string;
 	phone?: string;
@@ -24,19 +28,25 @@ export interface IOrderResponse {
 	total?: number;
 }
 
-export interface IAppState {
-    catalog: IProduct[]
-    basket: string[]
-    preview: string | null
-    order: IOrder
-	// дописать методы
-
+export interface ICatalogModel {
+	catalog: IProduct[];
+	preview: string | null;
+	setCatalog(products: IProduct[]): void;
+	setPreview(product: ProductCard): void;
 }
 
-//ПОДУМАТЬ НАДО ЭТО ИЛИ НЕТ
-export type TOrderInfo = Pick<IOrderForm, 'payment' | 'address'>;
+export interface IBasketModel {
+	basket: IBasketItem[];
+	addToBasket(product: IProduct): void;
+	removeFromBasket(productId: string): void;
+	getBasket(): IProduct[];
+	getTotalPrice(): number;
+	clearBasket(): void;
+}
 
-export type TContactsInfo = Pick<IOrderForm, 'email' | 'phone'>;
+export interface IBasketItem extends IProduct {
+	quantity: number;
+}
 
 export type FormErrors = Partial<Record<keyof IOrder, string>>;
 

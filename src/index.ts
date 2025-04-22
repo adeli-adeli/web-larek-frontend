@@ -2,10 +2,10 @@ import { ProductView } from './components/view/ProductView';
 import { AppApi } from './components/model/AppApi';
 import { EventEmitter, IEvents } from './components/base/events';
 import './scss/styles.scss';
-import { IOrder, IOrderForm, IProduct } from './types';
+import { IProduct } from './types';
 import { API_URL, CDN_URL } from './utils/constants';
 import { cloneTemplate, ensureElement } from './utils/utils';
-import { AppState } from './components/model/AppData';
+import {  CatalogModel } from './components/model/CatalogModel';
 import { Modal } from './common/Modal/Modal';
 import { Page } from './common/Modal/Page';
 import { BasketView } from './components/view/BasketView';
@@ -16,9 +16,9 @@ import {
 } from './components/Callbacks';
 import { Order } from './components/view/OrderView';
 import { Contacts } from './components/view/ContactsView';
-import { error } from 'console';
 import { Success } from './components/view/SuccessView';
-import { escape } from 'querystring';
+import { BasketModel } from './components/model/BasketModel';
+import { OrderModel } from './components/model/OrderModel';
 
 const events: IEvents = new EventEmitter();
 const api = new AppApi(CDN_URL, API_URL);
@@ -33,23 +33,27 @@ const orderTemplate = ensureElement<HTMLTemplateElement>('#order');
 const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
 
 //  Модель данных приложения
-const appState = new AppState({}, events);
+const catalogModel = new CatalogModel({}, events);
+const basketModel = new BasketModel(events);
+const orderModel = new OrderModel(events);
+
 
 // Глобальные контейнеры
 const page = new Page(ensureElement<HTMLElement>('.gallery'), events);
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 
+
 const basket = new BasketView(cloneTemplate(basketTemplate), events);
 const contacts = new Contacts(
 	cloneTemplate(contactsTemplate),
 	events,
-	appState
+	orderModel
 );
-const order = new Order(cloneTemplate(orderTemplate), events, appState);
+const order = new Order(cloneTemplate(orderTemplate), events, orderModel);
 
 // Обрабатываем событие, которое срабатывает после загрузки данных о товарах
 events.on('products:changed', () => {
-	page.catalog = appState.catalog.map((product) => {
+	page.catalog = catalogModel.catalog.map((product) => {
 		const productInstant = new ProductView(
 			cloneTemplate(cardCatalogTemplate),
 			events,
@@ -59,17 +63,17 @@ events.on('products:changed', () => {
 	});
 
 	// Обновляем счетчик корзины
-	page.counter = appState.getBasket().length;
+	page.counter = basketModel.getBasket().length;
 });
 
 // Подписка на событие выбора товара
 events.on('product:select', ({ id }: { id: string }) => {
 	// Получаем товар по id из catalog
-	const productId = appState.catalog.find((item) => item.id === id);
+	const productId = catalogModel.catalog.find((item) => item.id === id);
 
 	if (productId) {
 		// Передаем найденный товар в метод setPreview
-		appState.setPreview(productId);
+		catalogModel.setPreview(productId);
 	}
 });
 
@@ -96,10 +100,10 @@ events.on('preview:changed', (product: IProduct) => {
 
 // Добавление товара
 events.on('card:add', ({ id }: { id: string }) => {
-	const product = appState.catalog.find((item) => item.id === id);
+	const product = catalogModel.catalog.find((item) => item.id === id);
 
 	if (product) {
-		appState.addToBasket(product);
+		basketModel.addToBasket(product);
 	}
 
 	modal.close();
@@ -107,13 +111,13 @@ events.on('card:add', ({ id }: { id: string }) => {
 
 //  Удаление товара
 events.on('card:remove', ({ id }: { id: string }) => {
-	appState.removeFromBasket(id);
+	basketModel.removeFromBasket(id);
 });
 
 //  Обрабатываем событие, которое обновляет корзину при добавление или удаление товара
 events.on('basket:updated', () => {
-	const items = appState.getBasket();
-	const total = appState.getTotalPrice();
+	const items = basketModel.getBasket();
+	const total = basketModel.getTotalPrice();
 	page.counter = items.length;
 
 	console.log();
@@ -131,46 +135,6 @@ events.on('basket:updated', () => {
 	basket.total = total;
 	basket.addedItems = items.map((item) => item.id);
 });
-
-// Изменилось состояние валидации формы
-events.on('formErrors:change', (errors: Partial<IOrderForm>) => {
-	// Обработка формы заказа (доставка)
-
-	if ('payment' in errors || 'address' in errors) {
-		order.valid = !errors.payment && !errors.address;
-		order.errors = Object.values({
-			payment: errors.payment,
-			address: errors.address,
-		})
-			.filter(Boolean)
-			.join('. ');
-	}
-
-	// Обработка формы контактов
-	if ('email' in errors || 'phone' in errors) {
-		order.valid = !errors.email && !errors.phone;
-		order.errors = Object.values({
-			email: errors.email,
-			phone: errors.phone,
-		})
-			.filter(Boolean)
-			.join('. ');
-	}
-});
-
-// Изменилось одно из полей
-events.on(
-	/^order\..*:change/,
-	(data: { field: keyof IOrderForm; value: string }) => {
-		appState.setOrderField(data.field, data.value);
-	}
-);
-events.on(
-	/^order\..*:change/,
-	(data: { field: keyof IOrderForm; value: string }) => {
-		appState.setOrderFieldContacts(data.field, data.value);
-	}
-);
 
 // Открыть форму заказа
 events.on('order:form:open', () => {
@@ -199,14 +163,16 @@ events.on('order:form:submit', () => {
 // Отправлена форма заказа
 events.on('order:submit', () => {
 	console.log(order);
+	console.log('Текущее состояние заказа:', orderModel.order);
+
 	api
-		.orderProducts(appState.order)
+		.orderProducts(orderModel.order)
 		.then((result) => {
 			const success = new Success(cloneTemplate(successTemplate), {
 				onClick: () => {
 					modal.close();
-					appState.clearBasket();
-					events.emit('order:change')
+					basketModel.clearBasket();
+					events.emit('order:change');
 				},
 			});
 
@@ -221,7 +187,7 @@ events.on('order:submit', () => {
 
 // Открыть корзину
 events.on('basket:open', () => {
-	const items = appState.getBasket();
+	const items = basketModel.getBasket();
 	basket.addedItems = items.map((item) => item.id);
 	modal.render({
 		content: basket.render(),
@@ -247,7 +213,7 @@ events.on('modal:close', () => {
 api
 	.getProductList()
 	.then((initialProduct) => {
-		appState.setCatalog(initialProduct);
+		catalogModel.setCatalog(initialProduct);
 	})
 	.catch((err) => {
 		console.log(err);
