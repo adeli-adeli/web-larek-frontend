@@ -3,9 +3,9 @@ import { IEvents } from '../base/events';
 
 export class BasketModel implements IBasketModel {
 	basket: IBasketItem[] = [];
-	protected events: IEvents;
+	
 
-	constructor(events: IEvents) {
+	constructor(protected events: IEvents) {
 		this.events = events;
 	}
 

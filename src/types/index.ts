@@ -1,4 +1,4 @@
-import { ProductCard } from "../components/model/CatalogModel";
+import { ProductCard } from '../components/model/CatalogModel';
 
 export interface IProduct {
 	id: string;
@@ -33,6 +33,7 @@ export interface ICatalogModel {
 	preview: string | null;
 	setCatalog(products: IProduct[]): void;
 	setPreview(product: ProductCard): void;
+	getPreviewProduct(): ProductCard;
 }
 
 export interface IBasketModel {

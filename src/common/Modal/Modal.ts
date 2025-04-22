@@ -10,11 +10,11 @@ interface IModelData {
 export class Modal extends Component<IModelData> {
 	protected _closeButton: HTMLButtonElement;
 	protected _content: HTMLElement;
-	protected events: IEvents;
 
-	constructor(protected container: HTMLElement, events: IEvents) {
+
+	constructor(protected container: HTMLElement, protected events: IEvents) {
 		super(container);
-		this.events = events;
+		
 
 		this._closeButton = ensureElement<HTMLButtonElement>(
 			'.modal__close',

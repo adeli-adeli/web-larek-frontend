@@ -98,10 +98,6 @@ yarn build
 
 Представляет собой базувую модель, чтобы можно было отличить ее от простых объектов с данными
 
-Свойства:
-
-- protected events: IEvents - экземпляр класса `EventEmitter` для инициализации событий при изменении данных
-
 Конструктор:
 
 - constructor(data: Partial<T>, protected events: IEvents)
@@ -112,67 +108,53 @@ yarn build
 
 ### СЛОЙ ДАННЫХ
 
+#### Класс ProductCard
+
+Модель карточки товара. Расширяет базовый класс Model<IProduct> и инкапсулирует свойства одного товара.\
+Конструктор класса принимает данные товара и инстант брокера событий.
+
+Свойства:
+
+- id: string - уникальный индентификатор товара
+- title: string - название товара
+- price: number - цена
+- description: string - описание
+- image: string - изображение товара
+- category: string - категория товара
+
+Конструктор:
+
+constructor(data: IProduct, events: IEvents)
+
 #### Класс CatalogModel
 
-Класс отвечает за хранение и логику работы с данными товара.\
-Конструктор класса принимает инстант брокера событий\
+Наследует от базового класса Model.\
+Класс отвечает за хранение и логику работы с данными товара.
 
 Свойства:
 
-- protected \_products: IProduct[] - массив объектов товара
-- protected \_selectProduct: IProduct - выбрать товар
-- protected events: IEvents - экземпляр класса `EventEmitter` для инициализации событий при изменении данных
-
-Конструктор:
-
-- constructor(events: IEvents)
+- protected \_catalog: ProductCard[] - массив объектов товара
+- protected \_preview: string | null - выбрать товар
 
 Методы:
 
-- get products: IProduct[] - получение данных товаров
-- set products(product: IProduct[]) - сохранение данных товаров
-- getProduct(productId: string): IProduct - возвращает товар по ее id
-- getSelectProduct(): IProduct - получение текущего выбранного товара
-- setSelectProduct(productId: string): IProduct - устанавливает выбраный товар
-
-#### Класс UserModel
-
-Отвечает за хранение и логику работы с данными пользователя.\
-Конструктор принимает экземпляр брокера событий.\
-
-Свойства:
-
-- protected payment: string - выбор оплаты
-- protected address: string - адресс доставки
-- protected email: string - почта
-- protected phone: string - номер телефона
-- protected events: IEvents - это экземпляр класса `EventEmitter`, который будет использоваться для отправки событий при изменении данных
-
-Конструктор:
-
-- constructor(events: IEvents)
-
-Методы:
-
-- getUserInfo(): IOrderForm - получение данных пользователя
-- setUserInfo(userData: IOrderForm): void - сохраняет данные пользователя в классе
-- ValidationPaymentInfo(data: Record<keyof TUserPaymentInfo, string>): Partial<Record<keyof TUserPaymentInfo, string>> - проверяет объект платежной информацией пользователя на валидность
-- ValidationUserInfo(data: Record<keyof IOrderForm, string>): Partial<Record<keyof IOrderForm, string>> - проверяет объект с данными пользователя на валидность
+- setCatalog(products: IProduct[]) - устанавливает товар в каталог и обновляем отображение
+- setPreview(product: ProductCard) - устанавливает товар для предварительного просмотра
+- getPreviewProduct(): ProductCard - возвращает товар, выбранный для предварительного просмотра
+- getCatalog(): ProductCard[] - возвращает каталог товара
 
 #### Класс BasketModel
 
 Отвечает за хранение и логику работы с данными товаров в корзине.\
-Конструктор принимает экземпляр брокера событий.\
+Конструктор принимает экземпляр брокера событий.
 
 Свойства:
 
-- protected products: IProduct[] - массив объектов товара
-- protected user: IOrderForm - данные пользователя для оформления заказа
-- protected events: IEvents - это экземпляр класса `EventEmitter`, который будет использоваться для отправки событий при изменении данных.
+- basket: IBasketItem[] - считается количество товара, чтобы небыло дубликатов
 
 Конструктор:
 
-- constructor(events: IEvents)
+- constructor(protected events: IEvents)
 
 Методы:
 
@@ -184,19 +166,22 @@ yarn build
 
 #### Класс OrderModel
 
+Наследует от базового класса Model.\
 Отвечает за хранение и логику работы с данными заказа.\
-Конструктор принимает экземпляр брокера событий.\
+Конструктор принимает экземпляр брокера событий.
 
 Свойства:
 
-- protected basket: IBasketModel - это экземпляр класса 'BasketModel', который будет использоваться для вызовов методов
-- protected events: IEvents - это экземпляр класса `EventEmitter`, который будет использоваться для отправки событий при изменении данных.
+- order: IOrder - инициализация объекта заказа с дефолтными значениями
+- formErrors: FormErrors - объект для хранения ошибок формы
 
 Конструктор:
 
-- constructor(events: IEvents)
+- constructor(protected events: IEvents)
 
 Методы:
+
+<!-- дописать методы -->
 
 - createOrder(user: IOrderForm): IOrder - создание заказа, используя данные пользователя и корзины.
 - getOrderResponse(): IOrderResponse - возвращает информацию о заказе
@@ -205,146 +190,171 @@ yarn build
 
 Все классы представления отвечают за отображение внутри контейнера (DOM-элемент) передаваемых в них данных.
 
-#### Класс ModalView
+#### Класс Modal
 
-Реализует модальное окно.Устанавливает слушатель на клик по оверлею и кнопку-крестик для закрытие модального окна.
+Наследует от базового класса Component.\
+Реализует модальное окно. Устанавливает слушатель на клик по оверлею и кнопку-крестик для закрытие модального окна. Конструктор принимает контейнер и экземпляр брокера событий.
 
 Свойства:
 
-- modal: HTMLElement - элемент модального окна
-- events: IEvents - это экземпляр класса `EventEmitter`, который будет использоваться для отправки событий при изменении данных.
+- protected \_closeButton: HTMLButtonElement - кнопка для закрытия модального окна
+- protected \_content: HTMLElement - элемент модального окна
 
 Конструктор:
 
-- constructor(selector: string, events: IEvents)
+- constructor(protected container: HTMLElement, protected events: IEvents)
 
 Методы:
 
+- сеттер content - устанавливает контент в модальное окно
 - openModal(): void - открыть модальное окно
 - closeModal(): void - закрыть модальное окно
-- setUpEvents(): void - установить события
+
+#### Класс Page
+
+Наследует от базового класса Component.\
+Реализует контейнер для отоброжения на главной странице. Конструктор принимает контейнер и экземпляр брокера событий. Устанавливает слушатель на клик по корзине для открытия.
+
+Свойства:
+
+- protected \_counter: HTMLElement - количество товара в корзине
+- protected \_catalog: HTMLElement - каталог товара
+- protected \_wrapper: HTMLElement - прокрутка страницы
+- protected \_basket: HTMLElement - корзина
+
+Конструктор:
+
+- constructor(protected container: HTMLElement, protected events: IEvents)
+
+Методы:
+
+- сеттер counter - устанавливает значение счетчика товаров в корзине
+- сеттер catalog - устанавливает список товаров в каталог
+- сеттер locked - устанавливает блокировку на прокрутку страницы
 
 #### Класс ProductView
 
+Наследует от базового класса Component.\
 Класс используется для отображения карточек товаров на странице.
 
 Элементы разметки: название, изображения, категория, цена, описание.
 
-Конструктор принимает DOM элемент темплейта, который позволяет формировать карточки с разными вариантами верстки. Устанавливаем слушатели событий на интерактивные элементы, при взаимодействии с элементами генерируются события
+Конструктор принимает контейнер, который позволяет формировать карточки с разными вариантами верстки. Устанавливаем слушатель клика и вызываем колбэк, для работы с событиями
 
 Поля класса хранят данные о разметки элементов.
 
 Свойства:
 
-- protected description?: HTMLElement;
-- protected title: HTMLElement;
-- protected image: HTMLImageElement;
-- protected category: HTMLElement;
-- protected price: HTMLElement;
-- protected button: HTMLButtonElement
+- protected productCardCategory?: HTMLElement
+- protected productCardTitle: HTMLElement
+- protected productCardImage?: HTMLImageElement
+- protected productCardPrice: HTMLElement
+- protected productCardDescription?: HTMLElement
 
 Конструктор:
 
-- constructor(template: HTMLTemplateElement, events: IEvents)
+- constructor(protected container: HTMLElement, events: IEvents, callback: any)
 
 Методы:
 
-- setProduct(productId: IProduct): void - замолняет атрибуты элементов товара данными
-- render(): HTMLElement - возвращает полностью заполненый товар и устанавливает слушатели событий
-- get id - возвращает уникальный id карточки
+- сеттеры и геттеры для установления и возращение значений
 
 #### Класс BasketView
 
+Наследует от базового класса Component.\
 Класс используется для отображения выбраных товаров в корзине.
 
 Элементы разметки: выбранный товар, общая сумму товаров.
 
-Конструктор принимает DOM элемент темплейта, для работы с отображением корзины. Устанавливаем слушатели событий на интерактивные элементы, при взаимодействии с элементами генерируются события
+Конструктор принимает контейнер, для работы с отображением корзины. Устанавливаем слушатели событий на интерактивные элементы, при взаимодействии с элементами генерируются события
 
 Свойства:
 
-- protected items: HTMLElement;
-- protected total: HTMLElement;
-- protected button: HTMLButtonElement
+- protected \_list: HTMLElement
+- protected \_total: HTMLElement
+- protected \_button: HTMLElement
+- protected \_addedItems: HTMLElement
 
 Конструктор:
 
-- constructor(template: HTMLTemplateElement, events: IEvents)
+- constructor(protected container: HTMLElement, protected events: IEvents)
 
 Методы:
 
-- setProductCard(productId: ICard): void - замолняет список товаров
-- render(): HTMLElement - возвращает полностью заполненый товар и устанавливает слушатели событий
-- get id - возвращает уникальный id карточки
+- сеттер items - отображает список товаров или сообщение, что корзина пуста
+- сеттер addedItems - активирует или блокирует кнопку оформления заказа, в зависимости от наличия товаров
+- сеттер total - отображает общую сумму заказа
 
 #### Класс OrderView
 
+Наследует от базового класса Form.\
 Класс используется для оформления заказа
 
 Элементы разметки: выбор оплаты, адресс доставки.
 
-Конструктор принимает DOM элемент темплейта, для работы с отправкой формы.Устанавливаем слушатели событий на интерактивные элементы, при взаимодействии с элементами генерируются события
+Конструктор принимает конструктор, для работы с отправкой формы. Устанавливаем слушатели событий на интерактивные элементы, при взаимодействии с элементами генерируются события
 
 Свойства:
 
-- protected payment: HTMLElement;
-- protected address: HTMLElement;
-- protected button: HTMLButtonElement
+- protected paymentButtons: NodeListOf<HTMLButtonElement>
+- protected submitButton: HTMLElement
+- protected addressInput: HTMLInputElement
+- protected orderModel: OrderModel
 
 Конструктор:
 
-- constructor(template: HTMLTemplateElement, events: IEvents)
+- constructor(protected container: HTMLFormElement, protected events: IEvents, orderModel: OrderModel)
 
 Методы:
 
-- setOrder(user: IOrderForm): void - заполнять данные о заказе
-- render(): HTMLElement - возвращает полностью заполненый товар и устанавливает слушатели событий
+<!-- дописать методы -->
 
-#### Класс OrderUserView
+- setPayment(method: 'card' | 'cash') - заполнять данные о заказе - устанавливает выбранный способ оплаты
+- сеттер address - устанавливает значение адресса
 
+#### Класс ContactsView
+
+Наследует от базового класса Form.\
 Класс используется для оформления заказа уже с данными пользователя
 
 Элементы разметки: почта, номер.
 
-Конструктор принимает DOM элемент темплейта, для работы с отправкой формы.Устанавливаем слушатели событий на интерактивные элементы, при взаимодействии с элементами генерируются события
+Конструктор принимает конструктор, для работы с отправкой формы. Устанавливаем слушатели событий на интерактивные элементы, при взаимодействии с элементами генерируются события
 
 Свойства:
 
-- protected email: HTMLElement;
-- protected phone: HTMLElement;
-- protected button: HTMLButtonElement
+- protected submitButton: HTMLElement
+- protected emailInput: HTMLInputElement
+- protected phoneInput: HTMLInputElement
+- protected orderModel: OrderModel
 
 Конструктор:
 
-- constructor(template: HTMLTemplateElement, events: IEvents)
+- constructor(protected container: HTMLFormElement, protected events: IEvents, orderModel: OrderModel)
 
 Методы:
 
-- setOrderUser(user: IOrderForm): void - заполнять данные о пользователе
-- render(): HTMLElement - возвращает полностью заполненый товар и устанавливает слушатели событий
+- сеттер email - устанавливает значение почты
+- сеттер phone - устанавливает значение номер телефон
 
-#### Класс NotificationsView
+#### Класс SuccessView
 
+<!-- ДОДЕЛАТЬ  -->
+
+Наследует от базового класса Component.\
 Класс используется для отоброжения об успешной покупке
 
 Элементы разметки: сумма товара.
 
-Конструктор принимает DOM элемент темплейта, для работы с отображением уведомления.Устанавливаем слушатели событий на интерактивные элементы, при взаимодействии с элементами генерируются события
+Конструктор принимает контейнер, для работы с отображением уведомления. Устанавливаем слушатели событий на интерактивные элементы, при взаимодействии с элементами генерируются события
 
 Свойства:
-
-- protected productId: string;
-- protected total: HTMLElement;
-- protected button: HTMLButtonElement
 
 Конструктор:
 
 - constructor(template: HTMLTemplateElement, events: IEvents)
 
 Методы:
-
-- `getTotalPrice(product: IOrderResponse): void` - заполняет сумму товара
-- render(): HTMLElement - возвращает полностью заполненый товар и устанавливает слушатели событий
 
 ### СЛОЙ ПРЕЗЕНТОРА
 
@@ -368,7 +378,6 @@ _События, возникающие при взаимодействие по
 - "order:form:open" - открытие модального окна оплаты
 - "order:contacts:open" - открытие модального окна для заполнения данных пользователем
 - "order:result:show" - открытие модального окна с уведомлением
-
 
 - "product:delete" - удаления товара с корзины
 - "order-button:submit" - сохранение данных о выборе оплаты в модальном окне

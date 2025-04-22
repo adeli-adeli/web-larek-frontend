@@ -1,7 +1,4 @@
-import {
-	ICatalogModel,
-	IProduct,
-} from '../../types';
+import { ICatalogModel, IProduct } from '../../types';
 import { IEvents } from '../base/events';
 import { Model } from '../base/Model';
 
@@ -20,19 +17,28 @@ export class ProductCard extends Model<IProduct> {
 }
 
 export class CatalogModel extends Model<ICatalogModel> {
-	catalog: ProductCard[] = [];
-	preview: string | null;
-	
+	protected catalog: ProductCard[] = [];
+	protected preview: string | null;
 
-	//  Устанавливаем товар в каталог и обновляем отображение
+	//  Устанавливает товар в каталог и обновляем отображение
 	setCatalog(products: IProduct[]) {
 		this.catalog = products.map((item) => new ProductCard(item, this.events));
 		this.events.emit('products:changed', { catalog: this.catalog });
 	}
 
-	//  Устанавливаем товар для предварительного просмотра
+	//  Устанавливает товар для предварительного просмотра
 	setPreview(product: ProductCard) {
 		this.preview = product.id;
 		this.events.emit('preview:changed', product);
+	}
+
+	//  Возвращает товар, выбранный для предварительного просмотра
+	getPreviewProduct(): ProductCard {
+		return this.catalog.find((p) => p.id === this.preview);
+	}
+
+	// Возвращает каталог товара
+	getCatalog(): ProductCard[] {
+		return this.catalog;
 	}
 }

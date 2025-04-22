@@ -1,7 +1,6 @@
 import { Component } from '../base/Component';
 import { IEvents } from '../base/events';
 import { IProduct } from '../../types';
-import { ensureElement } from '../../utils/utils';
 
 export class ProductView extends Component<IProduct> {
 	protected productCardCategory?: HTMLElement;
@@ -9,42 +8,28 @@ export class ProductView extends Component<IProduct> {
 	protected productCardImage?: HTMLImageElement;
 	protected productCardPrice: HTMLElement;
 	protected productCardDescription?: HTMLElement;
-	protected addToBasketButton: HTMLButtonElement;
-	protected removeFromBasketButton: HTMLButtonElement;
-	 events: IEvents;
 
-	constructor(protected container: HTMLElement, events: IEvents, callback: any) {
+	events: IEvents;
+
+	constructor(
+		protected container: HTMLElement,
+		events: IEvents,
+		callback: any
+	) {
 		super(container);
 		this.events = events;
 
-		this.productCardCategory = container.querySelector(
-			`.card__category`,
-			
-		);
-		this.productCardTitle = container.querySelector(
-			`.card__title`,
-			
-		);
-		this.productCardImage = container.querySelector(
-			`.card__image`,
-			
-		);
+		this.productCardCategory = container.querySelector(`.card__category`);
+		this.productCardTitle = container.querySelector(`.card__title`);
+		this.productCardImage = container.querySelector(`.card__image`);
 
 		this.productCardDescription = container.querySelector('.card__text');
 
-		this.productCardPrice = container.querySelector(
-			`.card__price`,
-			
-		);
+		this.productCardPrice = container.querySelector(`.card__price`);
 
-		
-		
-		
 		this.container.addEventListener('click', (evt) => {
-			callback(evt, this)
+			callback(evt, this);
 		});
-		  
-
 	}
 
 	set id(id: string) {
@@ -98,7 +83,7 @@ export class ProductView extends Component<IProduct> {
 		this.category = product.category;
 		this.description = product.description;
 		this.price = product.price ? `${product.price} синапсов` : 'Бесценно';
-		
+
 		return this.container;
 	}
 }

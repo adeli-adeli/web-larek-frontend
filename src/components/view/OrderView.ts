@@ -1,17 +1,20 @@
-import { FormErrors, IOrderForm } from '../../types';
+import { IOrderForm } from '../../types';
 import { ensureElement } from '../../utils/utils';
-import { Component } from '../base/Component';
 import { IEvents } from '../base/events';
 import { OrderModel } from '../model/OrderModel';
-import { Form } from './FormView';
+import { Form } from '../../common/Modal/Form';
 
-export class Order extends Form<IOrderForm> {
+export class OrderView extends Form<IOrderForm> {
 	protected paymentButtons: NodeListOf<HTMLButtonElement>;
 	protected submitButton: HTMLElement;
 	protected addressInput: HTMLInputElement;
 	protected orderModel: OrderModel;
 
-	constructor(container: HTMLFormElement, events: IEvents, orderModel: OrderModel) {
+	constructor(
+		protected container: HTMLFormElement,
+		protected events: IEvents,
+		orderModel: OrderModel
+	) {
 		super(container, events);
 		this.orderModel = orderModel;
 
@@ -57,8 +60,7 @@ export class Order extends Form<IOrderForm> {
 		}
 	}
 
-	// Устанавливаем выбранный способ оплаты
-
+	// устанавливает выбранный способ оплаты
 	setPayment(method: 'card' | 'cash') {
 		this.paymentButtons.forEach((btn) => {
 			const isSelected = btn.name === method;
@@ -68,8 +70,7 @@ export class Order extends Form<IOrderForm> {
 		});
 	}
 
-	// Устанавливаем значение адресса
-
+	// устанавливает значение адресса
 	set address(value: string) {
 		this.addressInput.value = value;
 	}

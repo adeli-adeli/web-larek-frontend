@@ -5,7 +5,7 @@ import './scss/styles.scss';
 import { IProduct } from './types';
 import { API_URL, CDN_URL } from './utils/constants';
 import { cloneTemplate, ensureElement } from './utils/utils';
-import {  CatalogModel } from './components/model/CatalogModel';
+import { CatalogModel } from './components/model/CatalogModel';
 import { Modal } from './common/Modal/Modal';
 import { Page } from './common/Modal/Page';
 import { BasketView } from './components/view/BasketView';
@@ -14,9 +14,9 @@ import {
 	handleClickProductCard,
 	handleClickRemoveFromBasket,
 } from './components/Callbacks';
-import { Order } from './components/view/OrderView';
-import { Contacts } from './components/view/ContactsView';
-import { Success } from './components/view/SuccessView';
+import { OrderView } from './components/view/OrderView';
+import { ContactsView } from './components/view/ContactsView';
+import { SuccessView } from './components/view/SuccessView';
 import { BasketModel } from './components/model/BasketModel';
 import { OrderModel } from './components/model/OrderModel';
 
@@ -37,23 +37,21 @@ const catalogModel = new CatalogModel({}, events);
 const basketModel = new BasketModel(events);
 const orderModel = new OrderModel(events);
 
-
 // Глобальные контейнеры
 const page = new Page(ensureElement<HTMLElement>('.gallery'), events);
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 
-
 const basket = new BasketView(cloneTemplate(basketTemplate), events);
-const contacts = new Contacts(
+const contacts = new ContactsView(
 	cloneTemplate(contactsTemplate),
 	events,
 	orderModel
 );
-const order = new Order(cloneTemplate(orderTemplate), events, orderModel);
+const order = new OrderView(cloneTemplate(orderTemplate), events, orderModel);
 
 // Обрабатываем событие, которое срабатывает после загрузки данных о товарах
 events.on('products:changed', () => {
-	page.catalog = catalogModel.catalog.map((product) => {
+	page.catalog = catalogModel.getCatalog().map((product) => {
 		const productInstant = new ProductView(
 			cloneTemplate(cardCatalogTemplate),
 			events,
@@ -69,7 +67,7 @@ events.on('products:changed', () => {
 // Подписка на событие выбора товара
 events.on('product:select', ({ id }: { id: string }) => {
 	// Получаем товар по id из catalog
-	const productId = catalogModel.catalog.find((item) => item.id === id);
+	const productId = catalogModel.getCatalog().find((item) => item.id === id);
 
 	if (productId) {
 		// Передаем найденный товар в метод setPreview
@@ -78,7 +76,10 @@ events.on('product:select', ({ id }: { id: string }) => {
 });
 
 // Обрабатываем событие, которое обновляет товар для предварительного просмотра
-events.on('preview:changed', (product: IProduct) => {
+events.on('preview:changed', () => {
+	const product = catalogModel.getPreviewProduct();
+	if (!product) return;
+
 	const productPreview = new ProductView(
 		cloneTemplate(cardPreviewTemplate),
 		events,
@@ -87,20 +88,13 @@ events.on('preview:changed', (product: IProduct) => {
 
 	// Рендерим товар в модальном окне
 	modal.render({
-		content: productPreview.render({
-			id: product.id,
-			title: product.title,
-			price: product.price,
-			description: product.description,
-			category: product.category,
-			image: product.image,
-		}),
+		content: productPreview.render(product),
 	});
 });
 
 // Добавление товара
 events.on('card:add', ({ id }: { id: string }) => {
-	const product = catalogModel.catalog.find((item) => item.id === id);
+	const product = catalogModel.getCatalog().find((item) => item.id === id);
 
 	if (product) {
 		basketModel.addToBasket(product);
@@ -168,7 +162,7 @@ events.on('order:submit', () => {
 	api
 		.orderProducts(orderModel.order)
 		.then((result) => {
-			const success = new Success(cloneTemplate(successTemplate), {
+			const success = new SuccessView(cloneTemplate(successTemplate), {
 				onClick: () => {
 					modal.close();
 					basketModel.clearBasket();

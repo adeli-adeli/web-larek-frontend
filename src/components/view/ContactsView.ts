@@ -2,17 +2,17 @@ import { IOrderForm } from '../../types';
 import { ensureElement } from '../../utils/utils';
 import { IEvents } from '../base/events';
 import { OrderModel } from '../model/OrderModel';
-import { Form } from './FormView';
+import { Form } from '../../common/Modal/Form';
 
-export class Contacts extends Form<IOrderForm> {
+export class ContactsView extends Form<IOrderForm> {
 	protected submitButton: HTMLElement;
 	protected emailInput: HTMLInputElement;
 	protected phoneInput: HTMLInputElement;
 	protected orderModel: OrderModel;
 
 	constructor(
-		container: HTMLFormElement,
-		events: IEvents,
+		protected container: HTMLFormElement,
+		protected events: IEvents,
 		orderModel: OrderModel
 	) {
 		super(container, events);
@@ -58,14 +58,12 @@ export class Contacts extends Form<IOrderForm> {
 		}
 	}
 
-	// Устанавливаем значение почты
-
+	// устанавливает значение почты
 	set email(value: string) {
 		this.emailInput.value = value;
 	}
 
-	// Устанавливаем значение номер телефона
-
+	// устанавливает значение номер телефона
 	set phone(value: string) {
 		this.phoneInput.value = value;
 	}
