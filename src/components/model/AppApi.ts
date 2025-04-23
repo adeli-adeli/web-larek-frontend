@@ -9,12 +9,6 @@ export class AppApi extends Api implements IApi {
 		this.cdn = cdn;
 	}
 
-	getProductItem(id: string): Promise<IProduct> {
-		return this.get(`/product/${id}`).then((item: IProduct) => ({
-			...item,
-			image: this.cdn + item.image,
-		}));
-	}
 
 	getProductList(): Promise<IProduct[]> {
 		return this.get(`/product`).then((data: ApiListResponse<IProduct>) =>
@@ -23,14 +17,6 @@ export class AppApi extends Api implements IApi {
 				image: this.cdn + item.image,
 			}))
 		);
-	}
-
-	addProduct(data: IProduct): Promise<IProduct> {
-		return this.post<IProduct>(`/product`, data);
-	}
-
-	removeProduct(productId: string): Promise<IProduct> {
-		return this.post<IProduct>(`/product/${productId}`, {}, 'DELETE');
 	}
 
 	orderProducts(order: IOrderForm): Promise<IOrderResponse> {

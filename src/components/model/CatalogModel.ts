@@ -20,24 +20,24 @@ export class CatalogModel extends Model<ICatalogModel> {
 	protected catalog: ProductCard[] = [];
 	protected preview: string | null;
 
-	//  Устанавливает товар в каталог и обновляем отображение
+	//  устанавливает товар в каталог и обновляем отображение
 	setCatalog(products: IProduct[]) {
 		this.catalog = products.map((item) => new ProductCard(item, this.events));
 		this.events.emit('products:changed', { catalog: this.catalog });
 	}
 
-	//  Устанавливает товар для предварительного просмотра
+	//  устанавливает товар для предварительного просмотра
 	setPreview(product: ProductCard) {
 		this.preview = product.id;
 		this.events.emit('preview:changed', product);
 	}
 
-	//  Возвращает товар, выбранный для предварительного просмотра
+	//  возвращает товар, выбранный для предварительного просмотра
 	getPreviewProduct(): ProductCard {
 		return this.catalog.find((p) => p.id === this.preview);
 	}
 
-	// Возвращает каталог товара
+	// возвращает каталог товара
 	getCatalog(): ProductCard[] {
 		return this.catalog;
 	}

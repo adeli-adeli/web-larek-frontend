@@ -18,37 +18,37 @@ export class ContactsView extends Form<IOrderForm> {
 		super(container, events);
 		this.orderModel = orderModel;
 
-		// Кнопка
-
+		// кнопка
 		this.submitButton = ensureElement<HTMLButtonElement>(
 			'.button',
 			this.container
 		);
 
-		// Почта
-
+		// почта
 		this.emailInput = ensureElement<HTMLInputElement>(
 			'[name="email"]',
 			this.container
 		);
 
-		// Номер телефона
-
+		// номер телефона
 		this.phoneInput = ensureElement<HTMLInputElement>(
 			'[name="phone"]',
 			this.container
 		);
 
-		// Обработчик поля почты
+		// обработчик поля почты
+		this.emailInput.addEventListener('input', () => {
+			this.orderModel.setOrderData({email: this.emailInput.value})
+			this.checkValidity()
+		});
 
-		this.emailInput.addEventListener('input', () => {});
+		// обработчик поля номер телефона
+		this.phoneInput.addEventListener('input', () => {
+			this.orderModel.setOrderData({phone: this.phoneInput.value})
+			this.checkValidity()
+		});
 
-		// Обработчик поля номер телефона
-
-		this.phoneInput.addEventListener('input', () => {});
-
-		// Обработчик отправки формы
-
+		// обработчик отправки формы
 		if (this.submitButton) {
 			this.submitButton.addEventListener('click', (evt) => {
 				evt.preventDefault();

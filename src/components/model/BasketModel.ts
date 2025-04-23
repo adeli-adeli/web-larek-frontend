@@ -3,13 +3,12 @@ import { IEvents } from '../base/events';
 
 export class BasketModel implements IBasketModel {
 	basket: IBasketItem[] = [];
-	
 
 	constructor(protected events: IEvents) {
 		this.events = events;
 	}
 
-	// Добавление товара
+	// добавление товара
 	addToBasket(product: IProduct): void {
 		const element = this.basket.find((item) => item.id === product.id);
 
@@ -22,25 +21,36 @@ export class BasketModel implements IBasketModel {
 		this.events.emit('basket:updated');
 	}
 
-	// Удаление товара
+	// удаление товара
 	removeFromBasket(productId: string): void {
 		this.basket = this.basket.filter((product) => product.id !== productId);
 		this.events.emit('basket:updated');
 	}
 
-	// Получение товаров в корзине
+	// получение товаров в корзине
 	getBasket(): IProduct[] {
 		return this.basket;
 	}
 
-	// Получение общей стоимости товаров в корзине
+	// получение товара по id
+	getBasketId(): string[] {
+		return this.basket.map((item) => item.id)
+	}
+
+
+	// получение общей стоимости товаров в корзине
 	getTotalPrice(): number {
 		return this.basket.reduce((total, product) => total + product.price, 0);
 	}
 
-	// Очистка корзины
+	// очистка корзины
 	clearBasket(): void {
 		this.basket = [];
-		this.events.emit('basket:cleared');
+		this.events.emit('basket:clear');
+	}
+
+	// проверяем есть ли товар в корзине
+	isInBasket(productId: string): boolean {
+		return this.basket.some((item) => item.id === productId);
 	}
 }

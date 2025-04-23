@@ -8,6 +8,8 @@ export class ProductView extends Component<IProduct> {
 	protected productCardImage?: HTMLImageElement;
 	protected productCardPrice: HTMLElement;
 	protected productCardDescription?: HTMLElement;
+	protected addToProductButton: HTMLButtonElement;
+	protected itemIndex: HTMLElement;
 
 	events: IEvents;
 
@@ -19,13 +21,15 @@ export class ProductView extends Component<IProduct> {
 		super(container);
 		this.events = events;
 
-		this.productCardCategory = container.querySelector(`.card__category`);
-		this.productCardTitle = container.querySelector(`.card__title`);
-		this.productCardImage = container.querySelector(`.card__image`);
+		this.productCardCategory = this.container.querySelector(`.card__category`);
+		this.productCardTitle = this.container.querySelector(`.card__title`);
+		this.productCardImage = this.container.querySelector(`.card__image`);
+		this.addToProductButton = this.container.querySelector('.button__basket');
+		this.itemIndex = this.container.querySelector('.basket__item-index');
 
-		this.productCardDescription = container.querySelector('.card__text');
+		this.productCardDescription = this.container.querySelector('.card__text');
 
-		this.productCardPrice = container.querySelector(`.card__price`);
+		this.productCardPrice = this.container.querySelector(`.card__price`);
 
 		this.container.addEventListener('click', (evt) => {
 			callback(evt, this);
@@ -76,7 +80,26 @@ export class ProductView extends Component<IProduct> {
 		return this.productCardDescription.textContent || '';
 	}
 
-	render(product: Partial<IProduct>): HTMLElement {
+	// меняет состояние кнопки
+	setButton(isInBasket: boolean) {
+		if (!this.addToProductButton) return;
+		this.addToProductButton.disabled = isInBasket;
+		this.addToProductButton.textContent = isInBasket
+			? 'Уже в корзине'
+			: 'Добавить в корзину';
+	}
+
+	// устанавливает нумерацию для товара
+	setIndex(index: number) {
+		if (index) {
+			this.itemIndex.textContent = `${index}`;
+		}
+	}
+	render(
+		product: Partial<IProduct>,
+		isInBasket: boolean = false,
+		indexId: number = 0
+	): HTMLElement {
 		this.id = product.id;
 		this.title = product.title;
 		this.image = product.image;
@@ -84,6 +107,8 @@ export class ProductView extends Component<IProduct> {
 		this.description = product.description;
 		this.price = product.price ? `${product.price} синапсов` : 'Бесценно';
 
+		this.setButton(isInBasket);
+		this.setIndex(indexId);
 		return this.container;
 	}
 }

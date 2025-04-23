@@ -19,7 +19,7 @@ export interface IOrderForm {
 }
 
 export interface IOrder extends IOrderForm {
-	items: IProduct[];
+	items: string[];
 	total?: number;
 }
 
@@ -34,6 +34,7 @@ export interface ICatalogModel {
 	setCatalog(products: IProduct[]): void;
 	setPreview(product: ProductCard): void;
 	getPreviewProduct(): ProductCard;
+	getCatalog(): ProductCard[];
 }
 
 export interface IBasketModel {
@@ -41,15 +42,15 @@ export interface IBasketModel {
 	addToBasket(product: IProduct): void;
 	removeFromBasket(productId: string): void;
 	getBasket(): IProduct[];
+	getBasketId(): string[];
 	getTotalPrice(): number;
 	clearBasket(): void;
+	isInBasket(productId: string): boolean;
 }
 
 export interface IBasketItem extends IProduct {
 	quantity: number;
 }
-
-export type FormErrors = Partial<Record<keyof IOrder, string>>;
 
 export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 

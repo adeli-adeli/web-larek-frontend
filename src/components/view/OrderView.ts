@@ -18,40 +18,38 @@ export class OrderView extends Form<IOrderForm> {
 		super(container, events);
 		this.orderModel = orderModel;
 
-		// Получаем кнопки оплаты
-
+		// получаем кнопки оплаты
 		this.paymentButtons = this.container.querySelectorAll(
 			'.order__buttons button'
 		);
 
-		// Адресс
-
+		// адрес
 		this.addressInput = ensureElement<HTMLInputElement>(
 			'[name="address"]',
 			this.container
 		);
 
-		// Кнопка отправки
-
+		// кнопка отправки
 		this.submitButton = ensureElement<HTMLButtonElement>(
 			'.order__button',
 			this.container
 		);
 
-		// Обработчик выбора способа оплаты
-
+		// обработчик выбора способа оплаты
 		this.paymentButtons.forEach((btn) => {
 			btn.addEventListener('click', () => {
 				this.setPayment(btn.name as 'card' | 'cash');
+				this.orderModel.setOrderData({ payment: btn.name as 'card' | 'cash' });
 			});
 		});
 
-		// Обработка ввода адресса
+		// обработка ввода адреса
+		this.addressInput.addEventListener('input', () => {
+			this.orderModel.setOrderData({ address: this.addressInput.value });
+			this.checkValidity();
+		});
 
-		this.addressInput.addEventListener('input', () => {});
-
-		// Обработка отправки формы
-
+		// обработка отправки формы
 		if (this.submitButton) {
 			this.submitButton.addEventListener('click', (evt) => {
 				evt.preventDefault();
@@ -64,13 +62,12 @@ export class OrderView extends Form<IOrderForm> {
 	setPayment(method: 'card' | 'cash') {
 		this.paymentButtons.forEach((btn) => {
 			const isSelected = btn.name === method;
-			console.log(`Кнопка: ${method}, выбрана: ${isSelected} `);
 			this.toggleClass(btn, 'button_alt', isSelected);
 			this.toggleClass(btn, 'button_alt', !isSelected);
 		});
 	}
 
-	// устанавливает значение адресса
+	// устанавливает значение адреса
 	set address(value: string) {
 		this.addressInput.value = value;
 	}
