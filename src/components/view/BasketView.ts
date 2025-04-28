@@ -1,7 +1,6 @@
 import { Component } from '../base/Component';
 import { IEvents } from '../base/events';
 import { createElement, ensureElement } from '../../utils/utils';
-import { IProduct } from '../../types';
 
 interface IBasketView {
 	items: HTMLElement[];
@@ -56,5 +55,16 @@ export class BasketView extends Component<IBasketView> {
 	// отображает общую сумму заказа
 	set total(total: number) {
 		this.setText(this._total, `${total} синапсов`);
+	}
+
+	clear() {
+		this._list.replaceChildren(
+			createElement<HTMLParagraphElement>('p', {
+				textContent: 'Корзина пуста',
+			})
+		);
+		this.setText(this._total, '0 синапсов');
+
+		this.setDisabled(this._button, false);
 	}
 }

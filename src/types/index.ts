@@ -1,5 +1,3 @@
-import { ProductCard } from '../components/model/CatalogModel';
-
 export interface IProduct {
 	id: string;
 	description?: string;
@@ -9,10 +7,8 @@ export interface IProduct {
 	price: number | null;
 }
 
-export type TPayment = 'card' | 'cash';
-
 export interface IOrderForm {
-	payment?: TPayment;
+	payment?: string;
 	address?: string;
 	email?: string;
 	phone?: string;
@@ -32,9 +28,9 @@ export interface ICatalogModel {
 	catalog: IProduct[];
 	preview: string | null;
 	setCatalog(products: IProduct[]): void;
-	setPreview(product: ProductCard): void;
-	getPreviewProduct(): ProductCard;
-	getCatalog(): ProductCard[];
+	setPreview(product: IProduct): void;
+	getPreviewProduct(): IProduct;
+	getCatalog(): IProduct[];
 }
 
 export interface IBasketModel {

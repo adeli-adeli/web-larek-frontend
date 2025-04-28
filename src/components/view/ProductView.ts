@@ -1,6 +1,7 @@
 import { Component } from '../base/Component';
 import { IEvents } from '../base/events';
 import { IProduct } from '../../types';
+import { CATEGORY_STYLE, DEFAULT_CATEGORY_STYLE } from '../../utils/constants';
 
 export class ProductView extends Component<IProduct> {
 	protected productCardCategory?: HTMLElement;
@@ -16,16 +17,26 @@ export class ProductView extends Component<IProduct> {
 	constructor(
 		protected container: HTMLElement,
 		events: IEvents,
-		callback: any
+		callback: (evt: MouseEvent, product: ProductView) => void
 	) {
 		super(container);
 		this.events = events;
 
-		this.productCardCategory = this.container.querySelector(`.card__category`);
-		this.productCardTitle = this.container.querySelector(`.card__title`);
-		this.productCardImage = this.container.querySelector(`.card__image`);
-		this.addToProductButton = this.container.querySelector('.button__basket');
-		this.itemIndex = this.container.querySelector('.basket__item-index');
+		this.productCardCategory = this.container.querySelector(
+			`.card__category`
+		) as HTMLElement;
+		this.productCardTitle = this.container.querySelector(
+			`.card__title`
+		) as HTMLElement;
+		this.productCardImage = this.container.querySelector(
+			`.card__image`
+		) as HTMLImageElement;
+		this.addToProductButton = this.container.querySelector(
+			'.button__basket'
+		) as HTMLButtonElement;
+		this.itemIndex = this.container.querySelector(
+			'.basket__item-index'
+		) as HTMLElement;
 
 		this.productCardDescription = this.container.querySelector('.card__text');
 
@@ -45,7 +56,17 @@ export class ProductView extends Component<IProduct> {
 	}
 
 	set category(category: string) {
+		if (!this.productCardCategory) {
+			return;
+		}
+
+		const style = CATEGORY_STYLE[category] || DEFAULT_CATEGORY_STYLE['default'];
+
 		this.setText(this.productCardCategory, category);
+
+		if (style) {
+			this.productCardCategory.classList.add(style);
+		}
 	}
 
 	get category() {
@@ -81,33 +102,42 @@ export class ProductView extends Component<IProduct> {
 	}
 
 	// меняет состояние кнопки
-	setButton(isInBasket: boolean) {
+	setButton(isInBasket: boolean, isFree = false) {
 		if (!this.addToProductButton) return;
-		this.addToProductButton.disabled = isInBasket;
-		this.addToProductButton.textContent = isInBasket
-			? 'Уже в корзине'
-			: 'Добавить в корзину';
+
+		if (isFree) {
+			this.setDisabled(this.addToProductButton, true);
+			this.setText(this.addToProductButton, 'Недоступен для заказа');
+		} else {
+			this.setDisabled(this.addToProductButton, isInBasket);
+			this.setText(
+				this.addToProductButton,
+				isInBasket ? 'Уже в корзине' : 'Добавить в корзину'
+			);
+		}
 	}
 
 	// устанавливает нумерацию для товара
 	setIndex(index: number) {
 		if (index) {
-			this.itemIndex.textContent = `${index}`;
+			this.setText(this.itemIndex, `${index}`);
 		}
 	}
 	render(
 		product: Partial<IProduct>,
-		isInBasket: boolean = false,
-		indexId: number = 0
+		isInBasket = false,
+		indexId = 0
 	): HTMLElement {
 		this.id = product.id;
 		this.title = product.title;
 		this.image = product.image;
 		this.category = product.category;
 		this.description = product.description;
-		this.price = product.price ? `${product.price} синапсов` : 'Бесценно';
 
-		this.setButton(isInBasket);
+		const isFree = product.price === null;
+		this.price = !isFree ? `${product.price} синапсов` : 'Бесценно';
+
+		this.setButton(isInBasket, isFree);
 		this.setIndex(indexId);
 		return this.container;
 	}

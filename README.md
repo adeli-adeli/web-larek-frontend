@@ -108,24 +108,6 @@ yarn build
 
 ### СЛОЙ ДАННЫХ
 
-#### Класс ProductCard
-
-Модель карточки товара. Расширяет базовый класс Model.
-Конструктор класса принимает данные товара и инстант брокера событий.
-
-Свойства:
-
-- id: string - уникальный индентификатор товара
-- title: string - название товара
-- price: number - цена
-- description: string - описание
-- image: string - изображение товара
-- category: string - категория товара
-
-Конструктор:
-
-constructor(data: IProduct, events: IEvents)
-
 #### Класс CatalogModel
 
 Наследует от базового класса Model.\
@@ -184,6 +166,10 @@ constructor(data: IProduct, events: IEvents)
 Методы:
 
 - setOrderData(order: Partial<IOrder>) - добавляем те поля данных которые еще не были добавлены
+- setOrderField(field: keyof IOrderForm, value: string) - устанавливаем значение поля заказа, и запускаем валидацию
+- setContactsField(field: keyof IOrderForm, value: string) - устанавливаем значение поля контактов, и запускаем валидацию
+- validateOrder() - валидация данных заказа
+- validateUserData() - валидация данных контакты
 
 #### Класс AppApi
 
@@ -255,6 +241,7 @@ constructor(data: IProduct, events: IEvents)
 Свойства:
 
 - protected \_submit: HTMLButtonElement - кнопка для отправки данных с формы
+- protected \_errors: HTMLElement - элемент сообщения
 
 Конструктор:
 
@@ -264,6 +251,7 @@ constructor(data: IProduct, events: IEvents)
 
 - protected onInputChange(field: keyof T, value: string) - обрабатывает изменение значения в поле ввода и эмитит соответствующее событие
 - сеттер valid - устанавливает состояние кнопки отправки: отключает, если форма невалидна
+- сеттер errors - устанавливает сообщение об ошибке
 - checkValidity() - проверяет, что все импуты заполнены (не пустые)
 
 #### Класс ProductView
@@ -289,7 +277,7 @@ constructor(data: IProduct, events: IEvents)
 
 Конструктор:
 
-- constructor(protected container: HTMLElement, events: IEvents, callback: any)
+- constructor(protected container: HTMLElement, events: IEvents, callback: (evt: MouseEvent, product: ProductView) => void)
 
 Методы:
 
@@ -322,6 +310,7 @@ constructor(data: IProduct, events: IEvents)
 - сеттер items - отображает список товаров или сообщение, что корзина пуста
 - сеттер addedItems - активирует или блокирует кнопку оформления заказа, в зависимости от наличия товаров
 - сеттер total - отображает общую сумму заказа
+- clear() - очищает корзину
 
 #### Класс OrderView
 
@@ -347,6 +336,7 @@ constructor(data: IProduct, events: IEvents)
 
 - setPayment(method: 'card' | 'cash') - заполнять данные о заказе - устанавливает выбранный способ оплаты
 - сеттер address - устанавливает значение адреса
+- clear() - очищает форму
 
 #### Класс ContactsView
 
@@ -372,6 +362,7 @@ constructor(data: IProduct, events: IEvents)
 
 - сеттер email - устанавливает значение почты
 - сеттер phone - устанавливает значение номер телефон
+- clear() - очищает форму
 
 #### Класс SuccessView
 
@@ -414,3 +405,4 @@ _События, возникающие при взаимодействие по
 - "product:select" - открытие модального окна выбранной карточки
 - "card:remove" - удаления товара с корзины
 - "card:add" - добавление товара в корзину
+- "notification:close" - закрытие модального окна на кнопку

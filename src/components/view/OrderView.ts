@@ -29,7 +29,7 @@ export class OrderView extends Form<IOrderForm> {
 			this.container
 		);
 
-		// кнопка отправки
+		// // кнопка отправки
 		this.submitButton = ensureElement<HTMLButtonElement>(
 			'.order__button',
 			this.container
@@ -39,14 +39,13 @@ export class OrderView extends Form<IOrderForm> {
 		this.paymentButtons.forEach((btn) => {
 			btn.addEventListener('click', () => {
 				this.setPayment(btn.name as 'card' | 'cash');
-				this.orderModel.setOrderData({ payment: btn.name as 'card' | 'cash' });
+				this.orderModel.setOrderField('payment', btn.name as 'card' | 'cash');
 			});
 		});
 
 		// обработка ввода адреса
 		this.addressInput.addEventListener('input', () => {
-			this.orderModel.setOrderData({ address: this.addressInput.value });
-			this.checkValidity();
+			this.orderModel.setOrderField('address', this.addressInput.value);
 		});
 
 		// обработка отправки формы
@@ -69,6 +68,13 @@ export class OrderView extends Form<IOrderForm> {
 
 	// устанавливает значение адреса
 	set address(value: string) {
-		this.addressInput.value = value;
+		(this.container.elements.namedItem('address') as HTMLInputElement).value =
+			value;
+	}
+	clear() {
+		this.address = '';
+		this.paymentButtons.forEach((btn) => {
+			this.toggleClass(btn, 'button_alt', true);
+		});
 	}
 }

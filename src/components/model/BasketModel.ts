@@ -34,9 +34,8 @@ export class BasketModel implements IBasketModel {
 
 	// получение товара по id
 	getBasketId(): string[] {
-		return this.basket.map((item) => item.id)
+		return this.basket.map((item) => item.id);
 	}
-
 
 	// получение общей стоимости товаров в корзине
 	getTotalPrice(): number {

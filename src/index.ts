@@ -18,6 +18,7 @@ import { ContactsView } from './components/view/ContactsView';
 import { SuccessView } from './components/view/SuccessView';
 import { BasketModel } from './components/model/BasketModel';
 import { OrderModel } from './components/model/OrderModel';
+import { IOrderForm } from './types';
 
 const events: IEvents = new EventEmitter();
 const api = new AppApi(CDN_URL, API_URL);
@@ -135,7 +136,10 @@ events.on('basket:updated', () => {
 events.on('order:form:open', () => {
 	modal.render({
 		content: order.render({
+			payment: '',
+			address: '',
 			valid: false,
+			errors: [],
 		}),
 	});
 });
@@ -144,10 +148,46 @@ events.on('order:form:open', () => {
 events.on('order:form:submit', () => {
 	modal.render({
 		content: contacts.render({
+			email: '',
+			phone: '',
 			valid: false,
+			errors: [],
 		}),
 	});
 });
+
+// Изменилось состояние валидации формы
+events.on('formErrors:change', (errors: Partial<IOrderForm>) => {
+	const { address } = errors;
+	order.valid = !address;
+	order.errors = Object.values({ address })
+		.filter((i) => !!i)
+		.join('; ');
+});
+
+// Изменилось одно из полей
+events.on(
+	/^formErrors\.(address):change/,
+	(data: { field: keyof IOrderForm; value: string }) => {
+		orderModel.setOrderField(data.field, data.value);
+	}
+);
+
+events.on('formErrors:contacts:change', (errors: Partial<IOrderForm>) => {
+	const { email, phone } = errors;
+	order.valid = !email && !phone;
+	order.errors = Object.values({ email, phone })
+		.filter((i) => !!i)
+		.join('; ');
+});
+
+// Изменилось одно из полей
+events.on(
+	/^formErrors:contacts\.(email|phone):change/,
+	(data: { field: keyof IOrderForm; value: string }) => {
+		orderModel.setContactsField(data.field, data.value);
+	}
+);
 
 // Отправлена форма заказа
 events.on('order:submit', () => {
@@ -157,21 +197,16 @@ events.on('order:submit', () => {
 	orderModel.setOrderData({
 		items: items,
 		total: total,
-		payment: 'card',
-		email: 'test@test.ru',
-		phone: '+71234567890',
-		address: 'Spb Vosstania 1',
 	});
 	api
 		.orderProducts(orderModel.order)
 		.then((result) => {
-			const success = new SuccessView(cloneTemplate(successTemplate), {
-				onClick: () => {
-					modal.close();
-					basketModel.clearBasket();
-				},
-			});
+			const success = new SuccessView(cloneTemplate(successTemplate), events);
 
+			basket.clear();
+			basketModel.clearBasket();
+			order.clear();
+			contacts.clear();
 			modal.render({
 				content: success.render({ total: result.total }),
 			});
@@ -179,6 +214,10 @@ events.on('order:submit', () => {
 		.catch((err) => {
 			console.error(err);
 		});
+});
+
+events.on('notification:close', () => {
+	modal.close();
 });
 
 // Открыть корзину

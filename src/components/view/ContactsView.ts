@@ -38,14 +38,12 @@ export class ContactsView extends Form<IOrderForm> {
 
 		// обработчик поля почты
 		this.emailInput.addEventListener('input', () => {
-			this.orderModel.setOrderData({email: this.emailInput.value})
-			this.checkValidity()
+			this.orderModel.setContactsField('email', this.emailInput.value);
 		});
 
 		// обработчик поля номер телефона
 		this.phoneInput.addEventListener('input', () => {
-			this.orderModel.setOrderData({phone: this.phoneInput.value})
-			this.checkValidity()
+			this.orderModel.setContactsField('phone', this.phoneInput.value);
 		});
 
 		// обработчик отправки формы
@@ -66,5 +64,10 @@ export class ContactsView extends Form<IOrderForm> {
 	// устанавливает значение номер телефона
 	set phone(value: string) {
 		this.phoneInput.value = value;
+	}
+
+	clear() {
+		this.emailInput.value = '';
+		this.phoneInput.value = '';
 	}
 }

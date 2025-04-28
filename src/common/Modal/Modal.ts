@@ -1,7 +1,6 @@
-import { Component } from "../../components/base/Component";
-import { IEvents } from "../../components/base/events";
-import { ensureElement } from "../../utils/utils";
-
+import { Component } from '../../components/base/Component';
+import { IEvents } from '../../components/base/events';
+import { ensureElement } from '../../utils/utils';
 
 interface IModelData {
 	content: HTMLElement;
@@ -11,10 +10,8 @@ export class Modal extends Component<IModelData> {
 	protected _closeButton: HTMLButtonElement;
 	protected _content: HTMLElement;
 
-
 	constructor(protected container: HTMLElement, protected events: IEvents) {
 		super(container);
-		
 
 		this._closeButton = ensureElement<HTMLButtonElement>(
 			'.modal__close',

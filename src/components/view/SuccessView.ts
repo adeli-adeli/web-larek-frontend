@@ -1,18 +1,15 @@
 import { ensureElement } from '../../utils/utils';
 import { Component } from '../base/Component';
+import { IEvents } from '../base/events';
 
 interface ISuccess {
 	total: number;
 }
 
-interface ISuccessActions {
-	onClick: () => void;
-}
-
 export class SuccessView extends Component<ISuccess> {
 	protected _close: HTMLElement;
 
-	constructor(container: HTMLElement, actions: ISuccessActions) {
+	constructor(container: HTMLElement, protected events: IEvents) {
 		super(container);
 
 		this._close = ensureElement<HTMLElement>(
@@ -20,9 +17,9 @@ export class SuccessView extends Component<ISuccess> {
 			this.container
 		);
 
-		if (actions?.onClick) {
-			this._close.addEventListener('click', actions.onClick);
-		}
+		this._close.addEventListener('click', () => {
+			events.emit('notification:close');
+		});
 	}
 
 	render(state: ISuccess) {
@@ -30,7 +27,7 @@ export class SuccessView extends Component<ISuccess> {
 			'.order-success__description',
 			this.container
 		);
-		text.textContent = `Списано ${state.total} синапсов`;
+		this.setText(text, `Списано ${state.total} синапсов`);
 		return this.container;
 	}
 }

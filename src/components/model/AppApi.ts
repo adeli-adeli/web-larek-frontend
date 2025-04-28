@@ -9,7 +9,6 @@ export class AppApi extends Api implements IApi {
 		this.cdn = cdn;
 	}
 
-
 	getProductList(): Promise<IProduct[]> {
 		return this.get(`/product`).then((data: ApiListResponse<IProduct>) =>
 			data.items.map((item) => ({
