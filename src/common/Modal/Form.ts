@@ -25,7 +25,6 @@ export class Form<T> extends Component<IFormState> {
 			const field = target.name as keyof T;
 			const value = target.value;
 			this.onInputChange(field, value);
-			this.checkValidity();
 		});
 
 		this.container.addEventListener('submit', (e: Event) => {
@@ -39,16 +38,6 @@ export class Form<T> extends Component<IFormState> {
 			field,
 			value,
 		});
-	}
-
-	// проверяет, что все импуты заполнены
-	checkValidity(): void {
-		const allInputsFilled = Array.from(this.container.elements)
-			.filter((el): el is HTMLInputElement => el instanceof HTMLInputElement)
-			.filter((el) => el.type !== 'submit')
-			.every((input) => input.value.trim() !== '');
-
-		this.valid = allInputsFilled;
 	}
 
 	set valid(value: boolean) {

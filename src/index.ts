@@ -158,9 +158,9 @@ events.on('order:form:submit', () => {
 
 // Изменилось состояние валидации формы
 events.on('formErrors:change', (errors: Partial<IOrderForm>) => {
-	const { address } = errors;
-	order.valid = !address;
-	order.errors = Object.values({ address })
+	const { payment, address } = errors;
+	order.valid = !payment && !address;
+	order.errors = Object.values({ payment, address })
 		.filter((i) => !!i)
 		.join('; ');
 });

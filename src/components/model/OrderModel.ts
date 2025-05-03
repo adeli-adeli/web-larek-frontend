@@ -7,7 +7,7 @@ type FormErrors = Partial<Record<keyof IOrderForm, string>>;
 
 export class OrderModel extends Model<IOrder> {
 	order: IOrder = {
-		payment: 'card',
+		payment: '',
 		address: '',
 		email: '',
 		phone: '',
@@ -43,15 +43,19 @@ export class OrderModel extends Model<IOrder> {
 	// валидация данных заказа
 	validateOrder() {
 		const errors: FormErrors = {};
+		if (!this.order.payment) {
+			errors.payment = 'Выберите способ оплаты';
+		} else {
+			errors.payment = '';
+		}
+
 		if (!this.order.address) {
 			errors.address = 'Введите адрес';
 		} else {
 			errors.address = '';
 		}
 
-		// Обновляем ошибки формы
-		this.formErrors = { ...this.formErrors, ...errors };
-		this.events.emit('formErrors:change', this.formErrors);
+		this.events.emit('formErrors:change', errors);
 
 		return Object.keys(errors).length === 0;
 	}
@@ -74,8 +78,7 @@ export class OrderModel extends Model<IOrder> {
 			errors.phone = '';
 		}
 		// Обновляем ошибки формы
-		this.formErrors = { ...this.formErrors, ...errors };
-		this.events.emit('formErrors:contacts:change', this.formErrors);
+		this.events.emit('formErrors:contacts:change', errors);
 
 		return Object.keys(errors).length === 0;
 	}
