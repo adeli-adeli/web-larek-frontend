@@ -68,11 +68,10 @@ export class OrderView extends Form<IOrderForm> {
 
 	// устанавливает значение адреса
 	set address(value: string) {
-		(this.container.elements.namedItem('address') as HTMLInputElement).value =
-			value;
+		this.addressInput.value = value
 	}
 	clear() {
-		this.address = '';
+		this.orderModel.order.address = ''
 		this.paymentButtons.forEach((btn) => {
 			this.toggleClass(btn, 'button_alt', true);
 		});

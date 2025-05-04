@@ -154,6 +154,7 @@ events.on('order:form:submit', () => {
 			errors: [],
 		}),
 	});
+	order.clear();
 });
 
 // Изменилось состояние валидации формы
@@ -242,6 +243,7 @@ events.on('modal:open', () => {
 // ... и разблокируем
 events.on('modal:close', () => {
 	page.locked = false;
+	order.clear();
 });
 
 // Получаем товары с сервера

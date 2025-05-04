@@ -67,7 +67,7 @@ export class ContactsView extends Form<IOrderForm> {
 	}
 
 	clear() {
-		this.emailInput.value = '';
-		this.phoneInput.value = '';
+		this.orderModel.order.email = '';
+		this.orderModel.order.address = '';
 	}
 }
