@@ -22,4 +22,3 @@ export function handleClickRemoveFromBasket(
 ) {
 	productView.events.emit('card:remove', { id: productView.id });
 }
-

@@ -1,4 +1,4 @@
-import { ApiPostMethods, IApi } from '../../types';
+import { ApiPostMethods } from '../../types';
 
 export type ApiListResponse<Type> = {
 	total: number;

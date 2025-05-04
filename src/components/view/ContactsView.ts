@@ -1,8 +1,8 @@
+import { Form } from '../../common/Form';
 import { IOrderForm } from '../../types';
 import { ensureElement } from '../../utils/utils';
 import { IEvents } from '../base/events';
 import { OrderModel } from '../model/OrderModel';
-import { Form } from '../../common/Modal/Form';
 
 export class ContactsView extends Form<IOrderForm> {
 	protected submitButton: HTMLElement;
@@ -20,7 +20,7 @@ export class ContactsView extends Form<IOrderForm> {
 
 		// кнопка
 		this.submitButton = ensureElement<HTMLButtonElement>(
-			'.button',
+			'.contacts__button',
 			this.container
 		);
 

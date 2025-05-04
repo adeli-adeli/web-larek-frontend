@@ -1,8 +1,8 @@
+import { Form } from '../../common/Form';
 import { IOrderForm } from '../../types';
 import { ensureElement } from '../../utils/utils';
 import { IEvents } from '../base/events';
 import { OrderModel } from '../model/OrderModel';
-import { Form } from '../../common/Modal/Form';
 
 export class OrderView extends Form<IOrderForm> {
 	protected paymentButtons: NodeListOf<HTMLButtonElement>;
@@ -68,10 +68,10 @@ export class OrderView extends Form<IOrderForm> {
 
 	// устанавливает значение адреса
 	set address(value: string) {
-		this.addressInput.value = value
+		this.addressInput.value = value;
 	}
 	clear() {
-		this.orderModel.order.address = ''
+		this.orderModel.order.address = '';
 		this.paymentButtons.forEach((btn) => {
 			this.toggleClass(btn, 'button_alt', true);
 		});

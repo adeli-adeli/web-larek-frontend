@@ -3,7 +3,7 @@ import { IEvents } from '../base/events';
 import { Model } from '../base/Model';
 import { BasketModel } from './BasketModel';
 
-type FormErrors = Partial<Record<keyof IOrderForm, string>>;
+export type FormErrors = Partial<Record<keyof IOrderForm, string>>;
 
 export class OrderModel extends Model<IOrder> {
 	order: IOrder = {

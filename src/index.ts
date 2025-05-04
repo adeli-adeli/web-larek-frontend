@@ -5,8 +5,8 @@ import './scss/styles.scss';
 import { API_URL, CDN_URL } from './utils/constants';
 import { cloneTemplate, ensureElement } from './utils/utils';
 import { CatalogModel } from './components/model/CatalogModel';
-import { Modal } from './common/Modal/Modal';
-import { Page } from './common/Modal/Page';
+
+import { Page } from './common/Page';
 import { BasketView } from './components/view/BasketView';
 import {
 	handleClickAddToBasket,
@@ -17,8 +17,9 @@ import { OrderView } from './components/view/OrderView';
 import { ContactsView } from './components/view/ContactsView';
 import { SuccessView } from './components/view/SuccessView';
 import { BasketModel } from './components/model/BasketModel';
-import { OrderModel } from './components/model/OrderModel';
+import { FormErrors, OrderModel } from './components/model/OrderModel';
 import { IOrderForm } from './types';
+import { Modal } from './common/Modal';
 
 const events: IEvents = new EventEmitter();
 const api = new AppApi(CDN_URL, API_URL);
@@ -154,7 +155,6 @@ events.on('order:form:submit', () => {
 			errors: [],
 		}),
 	});
-	order.clear();
 });
 
 // Изменилось состояние валидации формы
@@ -166,29 +166,11 @@ events.on('formErrors:change', (errors: Partial<IOrderForm>) => {
 		.join('; ');
 });
 
-// Изменилось одно из полей
-events.on(
-	/^formErrors\.(address):change/,
-	(data: { field: keyof IOrderForm; value: string }) => {
-		orderModel.setOrderField(data.field, data.value);
-	}
-);
-
-events.on('formErrors:contacts:change', (errors: Partial<IOrderForm>) => {
-	const { email, phone } = errors;
-	order.valid = !email && !phone;
-	order.errors = Object.values({ email, phone })
-		.filter((i) => !!i)
-		.join('; ');
+events.on('formErrors:contacts:change', (errors: FormErrors) => {
+	const message = Object.values(errors).filter(Boolean);
+	contacts.errors = message.join('; ');
+	contacts.valid = message.length === 0;
 });
-
-// Изменилось одно из полей
-events.on(
-	/^formErrors:contacts\.(email|phone):change/,
-	(data: { field: keyof IOrderForm; value: string }) => {
-		orderModel.setContactsField(data.field, data.value);
-	}
-);
 
 // Отправлена форма заказа
 events.on('order:submit', () => {
