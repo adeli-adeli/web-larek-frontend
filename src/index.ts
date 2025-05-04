@@ -158,7 +158,7 @@ events.on('order:form:submit', () => {
 });
 
 // Изменилось состояние валидации формы
-events.on('formErrors:change', (errors: Partial<IOrderForm>) => {
+events.on('formErrors:changed', (errors: Partial<IOrderForm>) => {
 	const { payment, address } = errors;
 	order.valid = !payment && !address;
 	order.errors = Object.values({ payment, address })
@@ -166,7 +166,7 @@ events.on('formErrors:change', (errors: Partial<IOrderForm>) => {
 		.join('; ');
 });
 
-events.on('formErrors:contacts:change', (errors: FormErrors) => {
+events.on('formErrors:contacts:changed', (errors: FormErrors) => {
 	const message = Object.values(errors).filter(Boolean);
 	contacts.errors = message.join('; ');
 	contacts.valid = message.length === 0;

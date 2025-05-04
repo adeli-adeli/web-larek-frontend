@@ -15,8 +15,6 @@ export class OrderModel extends Model<IOrder> {
 		total: 0,
 	};
 
-	formErrors: FormErrors = {};
-
 	constructor(protected events: IEvents, protected basketModel: BasketModel) {
 		super({} as IOrder, events);
 	}
@@ -55,7 +53,7 @@ export class OrderModel extends Model<IOrder> {
 			errors.address = '';
 		}
 
-		this.events.emit('formErrors:change', errors);
+		this.events.emit('formErrors:changed', errors);
 
 		return Object.keys(errors).length === 0;
 	}
@@ -64,21 +62,21 @@ export class OrderModel extends Model<IOrder> {
 	validateUserData() {
 		const errors: FormErrors = {};
 
-		// Валидация email
+		
 		if (!this.order.email) {
 			errors.email = 'Введите почту';
 		} else {
 			errors.email = '';
 		}
 
-		// Валидация телефона
+		
 		if (!this.order.phone) {
 			errors.phone = 'Введите номер телефона';
 		} else {
 			errors.phone = '';
 		}
-		// Обновляем ошибки формы
-		this.events.emit('formErrors:contacts:change', errors);
+		
+		this.events.emit('formErrors:contacts:changed', errors);
 
 		return Object.keys(errors).length === 0;
 	}
