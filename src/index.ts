@@ -6,7 +6,6 @@ import { API_URL, CDN_URL } from './utils/constants';
 import { cloneTemplate, ensureElement } from './utils/utils';
 import { CatalogModel } from './components/model/CatalogModel';
 
-import { Page } from './common/Page';
 import { BasketView } from './components/view/BasketView';
 import {
 	handleClickAddToBasket,
@@ -18,8 +17,9 @@ import { ContactsView } from './components/view/ContactsView';
 import { SuccessView } from './components/view/SuccessView';
 import { BasketModel } from './components/model/BasketModel';
 import { FormErrors, OrderModel } from './components/model/OrderModel';
+import { Page } from './components/common/Page';
+import { Modal } from './components/common/Modal';
 import { IOrderForm } from './types';
-import { Modal } from './common/Modal';
 
 const events: IEvents = new EventEmitter();
 const api = new AppApi(CDN_URL, API_URL);
@@ -226,6 +226,7 @@ events.on('modal:open', () => {
 events.on('modal:close', () => {
 	page.locked = false;
 	order.clear();
+	contacts.clear();
 });
 
 // Получаем товары с сервера

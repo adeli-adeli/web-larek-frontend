@@ -1,7 +1,7 @@
-import { Form } from '../../common/Form';
 import { IOrderForm } from '../../types';
 import { ensureElement } from '../../utils/utils';
 import { IEvents } from '../base/events';
+import { Form } from '../common/Form';
 import { OrderModel } from '../model/OrderModel';
 
 export class ContactsView extends Form<IOrderForm> {
@@ -66,8 +66,11 @@ export class ContactsView extends Form<IOrderForm> {
 		this.phoneInput.value = value;
 	}
 
+	//  очистка формы контакты
 	clear() {
-		this.orderModel.order.email = '';
-		this.orderModel.order.address = '';
+		this.container.reset();
+		this.orderModel.setOrderField('email', '');
+		this.orderModel.setOrderField('phone', '');
+		this.orderModel.validateUserData();
 	}
 }

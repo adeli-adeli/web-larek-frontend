@@ -1,7 +1,7 @@
-import { Form } from '../../common/Form';
 import { IOrderForm } from '../../types';
 import { ensureElement } from '../../utils/utils';
 import { IEvents } from '../base/events';
+import { Form } from '../common/Form';
 import { OrderModel } from '../model/OrderModel';
 
 export class OrderView extends Form<IOrderForm> {
@@ -52,7 +52,7 @@ export class OrderView extends Form<IOrderForm> {
 		if (this.submitButton) {
 			this.submitButton.addEventListener('click', (evt) => {
 				evt.preventDefault();
-				events.emit('order:form:submit');
+				this.events.emit('order:form:submit');
 			});
 		}
 	}
@@ -70,10 +70,15 @@ export class OrderView extends Form<IOrderForm> {
 	set address(value: string) {
 		this.addressInput.value = value;
 	}
+
+	// очистка формы заказы
 	clear() {
-		this.orderModel.order.address = '';
+		this.container.reset();
+		this.orderModel.setOrderField('payment', '');
+		this.orderModel.setOrderField('address', '');
 		this.paymentButtons.forEach((btn) => {
 			this.toggleClass(btn, 'button_alt', true);
 		});
+		this.orderModel.validateOrder();
 	}
 }
